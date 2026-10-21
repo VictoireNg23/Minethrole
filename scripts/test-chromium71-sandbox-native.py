@@ -28,6 +28,19 @@ def read_test_results(path):
     return cases, passed
 
 
+def test_command(user, binary, xml_path, diagnostic=False):
+    prefix = ['/usr/sbin/runuser', '-u', user, '--']
+    if diagnostic:
+        prefix += [shutil.which('gdb'), '-nx', '-nh', '--batch',
+                   '-ex', 'set pagination off', '-ex', 'set follow-fork-mode child',
+                   '-ex', 'set detach-on-fork on', '-ex', 'run',
+                   '-ex', 'p $_siginfo', '-ex', 'info registers orig_rax rax rip',
+                   '-ex', 'thread apply all bt 15', '-ex', 'detach', '--args']
+    selected = 'BaselinePolicy.CreateThread' if diagnostic else ':'.join(sorted(EXPECTED))
+    return prefix + [str(binary), '--single-process-tests', '--gtest_filter=' + selected,
+                     '--gtest_output=xml:' + str(xml_path)]
+
+
 def no_core():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
@@ -35,7 +48,10 @@ def no_core():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage-report', required=True, type=Path)
+    parser.add_argument('--diagnostic-gdb', action='store_true', help='Follow only CreateThread subprocess under GDB; no passing verdict')
     args = parser.parse_args()
+    if args.diagnostic_gdb and not shutil.which('gdb'):
+        raise SystemExit('GDB required for this diagnostic')
     if os.geteuid() != 0:
         raise SystemExit('Controller requires root; tests run through runuser as the dedicated account')
     stage = json.loads(args.stage_report.read_text())
@@ -56,8 +72,7 @@ def main():
     local = Path(tempfile.mkdtemp(prefix='sandbox-native-', dir=Path(stage['session_directory'])))
     os.chown(local, account.pw_uid, account.pw_gid)
     xml_path = local / 'gtest-results.xml'
-    command = ['/usr/sbin/runuser', '-u', stage['user'], '--', str(binary), '--single-process-tests',
-               '--gtest_filter=' + ':'.join(sorted(EXPECTED)), '--gtest_output=xml:' + str(xml_path)]
+    command = test_command(stage['user'], binary, xml_path, args.diagnostic_gdb)
     result = {'status': 'incomplete', 'command': command, 'test_binary_sha256': digest.hexdigest(),
               'stage_report': str(args.stage_report.resolve()), 'results_directory': str(saved),
               'local_directory': str(local), 'browser_started': False, 'dataset_execution': 'not run'}
@@ -91,6 +106,9 @@ def main():
         result['status'] = 'three_native_bpf_tests_passed' if not timeout and process.returncode == 0 and all_passed else 'native_bpf_tests_failed_or_incomplete'
     except (OSError, ValueError, ET.ParseError) as error:
         result.update(status='native_bpf_tests_failed_or_incomplete', error=str(error))
+    if args.diagnostic_gdb:
+        result['status'] = 'create_thread_gdb_diagnostic_not_validation'
+        result['signal_details'] = [line for line in text.splitlines() if any(token in line for token in ('received signal', '_sigsys', 'si_signo', 'orig_rax', 'ptrace'))]
     (saved / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))
     print('Report:', saved / 'result.json')
