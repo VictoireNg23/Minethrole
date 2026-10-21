@@ -539,3 +539,34 @@ signatures et la décision originale de détection restent à vérifier ensuite.
 Les chemins `/tmp` sont ceux de cette session Grid5000 : après leur disparition,
 reconstruire et refaire le staging. Ne pas substituer silencieusement un autre
 binaire ; une nouvelle provenance doit être vérifiée et documentée.
+
+### Contrôles navigateur réussis et extension aux douze signatures
+
+Résultat utilisateur : `raw/synthetic-nosandbox-7kch_wfb/result.json`, statut
+`synthetic_browser_controls_passed`. Les neuf cas passent, chacun avec huit
+lignes de mesure : négatif et dormant nuls, actif compteur 0 à 20 000 et autres
+compteurs nuls. Cette validation utilise `--no-sandbox` et rseq désactivé.
+
+Étape suivante : tester chacune des douze signatures originales, une par module,
+en mode dormant puis actif, trois répétitions par cas (72 cas au total).
+La fixture calcule aussi le résultat arithmétique attendu indépendamment en
+JavaScript. Chaque actif doit atteindre 20 000 uniquement sur son compteur ;
+chaque dormant doit rester à zéro sur les douze compteurs.
+
+```bash
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/browser-all-signatures.XXXXXX.log")
+  python3 "$depot_grid/scripts/test-chromium71-synthetic-nosandbox.py" \
+    "$experience" \
+    --browser /tmp/minethrottle71-browser-test-_ysw60o_/browser/chrome \
+    --all-signatures \
+    --previous-controls-report "$experience/raw/synthetic-nosandbox-7kch_wfb/result.json" \
+    --repeats 3 2>&1 | tee "$journal"
+fi
+```
+
+Succès attendu : `synthetic_browser_all_signatures_passed`, 72 cas `passed`.
+Le script conserve chaque essai et le lien au rapport précédent. Il ne modifie
+ni les patchs ni les sources et n'exécute aucun fichier Dataset1_S. La décision
+de minage, les profils CPU et la défense ne sont pas validés par ces contrôles.

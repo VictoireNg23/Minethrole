@@ -21,6 +21,8 @@ def main():
     parser.add_argument('results_run', type=Path)
     parser.add_argument('--browser', type=Path, default=Path('/tmp/minethrottle71-browser-test-_ysw60o_/browser/chrome'))
     parser.add_argument('--repeats', type=int, default=3)
+    parser.add_argument('--all-signatures', action='store_true')
+    parser.add_argument('--previous-controls-report', type=Path)
     args = parser.parse_args()
     if os.geteuid() != 0 or not 1 <= args.repeats <= 10:
         parser.error('Root controller required; repeats must be 1..10')
@@ -28,6 +30,16 @@ def main():
     digest = hashlib.sha256(binary.read_bytes()).hexdigest()
     if digest != EXPECTED_BINARY:
         parser.error('Unexpected browser SHA256; inspect build provenance first')
+    previous = None
+    if args.all_signatures:
+        if args.previous_controls_report is None:
+            parser.error('Successful previous controls report required')
+        previous = json.loads(args.previous_controls_report.read_text())
+        if (previous.get('status') != 'synthetic_browser_controls_passed' or
+                previous.get('binary_sha256') != digest or
+                len(previous.get('cases', [])) != 9 or
+                any(c.get('status') != 'passed' for c in previous['cases'])):
+            parser.error('Previous nine controls must pass with this binary')
     account = pwd.getpwnam('minethrottle-test')
     if account.pw_uid == 0:
         parser.error('Runtime account must be nonroot')
@@ -35,11 +47,13 @@ def main():
     if not raw.is_dir():
         parser.error('Expected existing persistent run/raw directory')
     output = Path(tempfile.mkdtemp(prefix='synthetic-nosandbox-', dir=raw))
-    fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures/browser-wasm-counter.html'
+    fixture_name = 'browser-wasm-all-signatures.html' if args.all_signatures else 'browser-wasm-counter.html'
+    fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures' / fixture_name
     shutil.copy2(fixture, output / 'fixture.html')
     cases = []
     print('Persistent results:', output, flush=True)
-    for mode in ('negative', 'dormant', 'active'):
+    modes = [kind + str(i) for i in range(12) for kind in ('dormant', 'active')] if args.all_signatures else ['negative', 'dormant', 'active']
+    for mode in modes:
         for repeat in range(args.repeats):
             saved = output / f'{mode}-{repeat}'
             saved.mkdir()
@@ -92,11 +106,13 @@ def main():
                 observed = json.loads(html.unescape(match.group(1))) if match else None
             except ValueError:
                 observed = None
-            expected = [20000 if mode == 'active' else 0] + [0] * 11
+            expected = [0] * 12
+            if mode.startswith('active'):
+                expected[int(mode[6:]) if args.all_signatures else 0] = 20000
             maxima = [max(row[i] for row in rows) for i in range(12)] if rows else None
             passed = (process.returncode == 0 and not timeout and maxima == expected and
                       observed == {'status': 'executed', 'mode': mode,
-                                   'calls': 0 if mode == 'dormant' else 20000})
+                                   'calls': 0 if mode.startswith('dormant') else 20000})
             case = dict(mode=mode, repeat=repeat, status='passed' if passed else 'failed_or_unmeasurable',
                         exit_code=process.returncode, timeout=timeout, sample_rows=len(rows),
                         counter_maxima=maxima, expected=expected, wasm_result=observed,
@@ -105,7 +121,10 @@ def main():
             cases.append(case)
             print(json.dumps({k: case[k] for k in ('mode', 'repeat', 'status', 'exit_code', 'sample_rows', 'counter_maxima')}), flush=True)
     passed = all(case['status'] == 'passed' for case in cases)
-    report = dict(status='synthetic_browser_controls_passed' if passed else 'synthetic_browser_controls_failed_or_incomplete',
+    success_status = 'synthetic_browser_all_signatures_passed' if args.all_signatures else 'synthetic_browser_controls_passed'
+    report = dict(status=success_status if passed else 'synthetic_browser_controls_failed_or_incomplete',
+                  all_signatures=args.all_signatures,
+                  previous_controls_report=str(args.previous_controls_report.resolve()) if args.previous_controls_report else None,
                   binary_sha256=digest, sandbox_disabled=True, runtime_user=account.pw_name,
                   glibc_tunables=env['GLIBC_TUNABLES'], fixture_sha256=hashlib.sha256(fixture.read_bytes()).hexdigest(),
                   cases=cases, dataset_execution='not run', detection_validation='not performed')
