@@ -21,7 +21,12 @@ def main():
     parser.add_argument('workspace', type=Path)
     parser.add_argument('build_report', type=Path)
     parser.add_argument('fixture', type=Path)
+    parser.add_argument('--all-signatures', action='store_true')
+    parser.add_argument('--previous-smoke-report', type=Path)
     args = parser.parse_args()
+    if args.all_signatures:
+        if args.previous_smoke_report is None or json.loads(args.previous_smoke_report.read_text()).get('status') != 'counter_smoke_passed':
+            raise SystemExit('Full previous smoke report must confirm all cases passed')
     root = args.workspace.resolve()
     build = json.loads(args.build_report.read_text())
     if build.get('status') != 'd8_build_passed' or build.get('exit_code') != 0:
@@ -33,7 +38,8 @@ def main():
     fixture = args.fixture.resolve()
     run = Path(tempfile.mkdtemp(prefix='counter-smoke-', dir=root))
     result = {'status': 'incomplete', 'cases': [], 'dataset_execution': 'not run', 'defense_validation': 'not performed'}
-    for mode in ('dormant', 'negative', 'active'):
+    modes = [kind + str(i) for i in range(12) for kind in ('dormant', 'active')] if args.all_signatures else ['dormant', 'negative', 'active']
+    for mode in modes:
         cwd = run / mode
         cwd.mkdir()
         item = {'mode': mode, 'status': 'incomplete'}
@@ -48,7 +54,10 @@ def main():
                 rows.extend(parse_counters(path.read_text()))
             item['sample_rows'] = len(rows)
             item['counter_maxima'] = [max(row[i] for row in rows) for i in range(12)] if rows else None
-            expected = [20000] + [0] * 11 if mode == 'active' else [0] * 12
+            expected = [0] * 12
+            if mode.startswith('active'):
+                index = int(mode[6:]) if args.all_signatures else 0
+                expected[index] = 20000
             item['expected'] = expected
             item['status'] = 'passed' if process.returncode == 0 and 'SMOKE_OK ' + mode in process.stdout and item['counter_maxima'] == expected else 'failed_or_unmeasurable'
         except Exception as error:
