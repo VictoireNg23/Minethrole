@@ -3,7 +3,7 @@
   "existing_modern_revision": "d38909eb68d85b91259f4bf20fe5ebcd38461bc2",
   "selection": "Latest accessible first-parent commit before 2018-12-14T00:00:00Z in the user's existing local depot_tools history",
   "evidence": "User-supplied rev-list output, exit 0; repository is not shallow",
-  "compatibility": "not yet validated",
+  "compatibility": "help startup verified only; synchronization, CIPD coverage and hooks unverified",
   "preparation": "passed on Grid5000 according to user output: /tmp/minethrottle71-tools-li2ldh40; four internal symlinks preserved; Python 2.7.18 and Ninja 1.10.1 verified",
   "automatic_updates": false,
   "python_executable": "/usr/bin/python2",
@@ -15,5 +15,5 @@
     "cros_sdk": "support/chromite_wrapper"
   },
   "isolated_root": "/tmp/minethrottle71-tools-li2ldh40",
-  "gclient_help": "pending user execution"
+  "gclient_help": "passed on Grid5000: help_completed, exit 0, logs /tmp/minethrottle71-tools-li2ldh40/gclient-help-check-8uf79q31"
 }
