@@ -1,0 +1,10 @@
+{
+  "chromium_version": "71.0.3578.98",
+  "chromium_revision": "c2bec8045f7ad3ece1c5d80236183a21c1fac3f5",
+  "v8_revision": "b5a5d900a5385d6429edefb11ece72bfa649ca47",
+  "v8_version": "7.1.302.31",
+  "evidence": "User-supplied Grid5000 diagnostic output: Chromium tag resolution, V8 revision extracted from historical DEPS, and historical V8 version header. The patch-check script rechecks the DEPS mapping before extraction.",
+  "historical_context_check": "pending user execution on Grid5000",
+  "compilation": "not performed",
+  "runtime_validation": "not performed"
+}
