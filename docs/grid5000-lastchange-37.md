@@ -1,0 +1,7 @@
+# Génération GN : fichier LASTCHANGE.committime manquant
+
+La racine GN explicite fonctionne : la génération atteint `build/timestamp.gni` puis échoue car `build/util/LASTCHANGE.committime` est absent. Ce fichier est normalement généré par le hook `lastchange` identifié dans DEPS. Ce n'est pas une erreur C++ ni une preuve d'incompatibilité avec Ubuntu.
+
+`scripts/prepare-chromium71-lastchange.py WORKSPACE` appelle uniquement le générateur original `build/util/lastchange.py`, avec Python historique et des chemins source/sortie explicites. La sortie est d'abord produite dans un nouveau répertoire de staging. Le script vérifie la présence des deux sorties attendues et le caractère entier du timestamp avant de les copier dans `build/util`. Les destinations doivent être absentes ; l'ouverture exclusive refuse tout écrasement même si un fichier apparaît entre la vérification et la copie. Une erreur pendant la copie peut laisser une sortie partielle : préserver et inspecter le rapport avant toute reprise.
+
+Le timestamp provient du générateur des auteurs Chromium et de ses métadonnées Git, sans valeur inventée ni remplacement par l'heure courante. Le script ne lance pas les hooks globaux, ne change pas les patches et ne compile rien. Attendre le résultat puis relancer séparément la configuration GN corrigée. Les autres fichiers des hooks LASTCHANGE, notamment les headers GPU/Skia, restent à préparer si requis.
