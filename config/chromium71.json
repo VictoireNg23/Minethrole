@@ -5,7 +5,7 @@
   "v8_version": "7.1.302.31",
   "evidence": "User-supplied Grid5000 diagnostic output: Chromium tag resolution, V8 revision extracted from historical DEPS, and historical V8 version header. The patch-check script rechecks the DEPS mapping before extraction.",
   "historical_context_check": "passed on Grid5000, user-supplied terminal output: v8 and content; originals not applied",
-  "compilation": "not performed",
+  "compilation": "V8/d8 passed on Grid5000; full Chromium not compiled",
   "runtime_validation": "not performed",
   "historical_context_check_export": "/tmp/minethrottle71-patchcheck-sf53k34i",
   "initial_checkouts": "passed on Grid5000: /tmp/minethrottle71-work-rwkni3hv; Chromium/V8 exact HEADs and original patch contexts verified",
@@ -102,6 +102,12 @@
     "status": "passed",
     "report": "/tmp/minethrottle71-work-rwkni3hv/gn-config-ok6ykyck/result.json",
     "output_directory": "/tmp/minethrottle71-work-rwkni3hv/src/out/MineThrottle71-config-cp8f0qce",
+    "evidence": "user-supplied terminal JSON"
+  },
+  "d8_build": {
+    "status": "passed",
+    "elapsed_seconds": 116.88,
+    "report": "/tmp/minethrottle71-work-rwkni3hv/d8-build-n9s9y8tj/result.json",
     "evidence": "user-supplied terminal JSON"
   }
 }

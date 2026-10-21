@@ -1,0 +1,9 @@
+# V8/d8 compilé ; test dynamique initial des compteurs
+
+Grid5000 confirme `d8_build_passed`, code 0 après 116,88 secondes, 605 étapes terminées et binaire présent. Le patch V8 original compile avec Clang historique, sans adaptation C++ à ce stade. Chromium complet et `content.patch` ne sont pas encore compilés.
+
+Le test synthétique bénin `tests/fixtures/d8-counter-smoke.js` embarque deux petits modules Wasm sans imports. Le premier exécute six constantes i32 puis les cinq opcodes contigus `0x71 0x74 0x6a 0x73 0x76`, signature active du compteur 0 (clé 10159038433), puis retourne 0. Le second retourne seulement une constante. Trois processus séparés testent : module à signature instancié mais fonction non appelée (tous compteurs nuls), module sans signature exécuté (tous nuls), module à signature appelé 20 000 fois (compteur 0 égal à 20 000, autres nuls). Une courte attente active JS laisse le timer original échantillonner ; elle n'ajoute aucun opcode Wasm à compter.
+
+Le wrapper exécute d8 directement dans trois nouveaux répertoires, sans le lanceur qui changerait cwd. Le patch écrit ses fichiers `.count` et `.stack` dans ces répertoires. La présence de lignes d'échantillonnage et les maxima des douze compteurs sont comparés aux résultats attendus. Un trap, timeout, absence de mesure ou désaccord est un échec/incomplet, jamais un résultat bénin du dataset. Les sorties complètes sont conservées.
+
+Ce test vérifie initialement une seule signature et distingue compilation/instanciation d'une exécution dynamique. Il ne valide pas encore les onze autres signatures, vitesses, profils, seuils ou défense, désactivée par défaut dans le patch. Aucun module malveillant du dataset n'est exécuté. Le succès scientifique complet nécessitera ces vérifications supplémentaires et la compilation Chromium.
