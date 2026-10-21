@@ -1,0 +1,7 @@
+# Chromium corrigé et tests natifs compilés : nouveau staging
+
+Le retour Grid5000 `logs/chrome-build-lbv9ro65/result.json` confirme code 0, 172 étapes terminées en 12,6 secondes. Chrome SHA-256 `59e77231028f446d0abe03342ab6b2c2e17687a99aa86b58ca82f4118fb9218c` ; sandbox_linux_unittests SHA-256 `c7d8497e41eb6a4bf6d963592796dd5fc0b8fbcc7c0d9dcd9d9b70fd7c2bec04`. Les tests natifs et le navigateur ne sont pas encore exécutés avec ce build.
+
+Le script de staging accepte un rapport de build explicite et un rapport d'ancien staging pour réutiliser le compte dédié. La réutilisation exige même nom, UID/GID non root et même run ; aucun compte arbitraire n'est approprié. Le script crée toujours un nouveau répertoire local, sans remplacer l'ancien navigateur. Il copie aussi sandbox_linux_unittests et les données de test présentes, puis vérifie les deux empreintes. Une copie du nouveau rapport de build et la référence de l'adaptation clone3 sont conservées dans la provenance persistante.
+
+L'identité du dataset reste Dataset1_S, au chemin local Data/Swamped_10_. Aucun dataset n'est chargé par cette préparation. Après retour du nouveau staging, exécuter seulement les tests BPF ciblés : Clone3ReturnsEnosys, CreateThread, DisallowedCloneFlagCrashes. Leur succès réel doit précéder le nouveau lancement de la page bénigne sans debugger. La compilation du test ne vaut pas son exécution ni une validation complète du sandbox.
