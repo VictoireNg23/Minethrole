@@ -43,5 +43,19 @@
     "unsupported_path": 1,
     "not_a_pinned_git_dependency": 1,
     "evidence": "user-supplied final summary"
+  },
+  "dependency_sync_latest": {
+    "status": "failed_exit_1",
+    "elapsed_seconds": 73.55,
+    "diagnostic_directory": "/tmp/minethrottle71-work-rwkni3hv/sync-nohooks-brdu1qn4",
+    "cache_probe": {
+      "cache_path": null
+    },
+    "failed_dependency": "src/third_party/devtools-node-modules",
+    "observed_error": "historical gclient attempted _DeleteOrMove; shutil.move raised ENOENT; trigger not yet established",
+    "git_network_evidence": "glslang fetch succeeded and exact checkout retained",
+    "hooks": "disabled",
+    "build": "not run",
+    "evidence": "user-supplied terminal output"
   }
 }
