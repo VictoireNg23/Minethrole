@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>MineThrottle synthetic Wasm counter</title>
+<pre id="result">STARTING</pre>
+<pre id="wasm-result">NOT_EXECUTED</pre>
+<script>
+// Benign arithmetic only. No fetch, imports, dataset or mining implementation.
+try {
+  var mode = location.hash.slice(1);
+  if (mode !== 'active' && mode !== 'dormant' && mode !== 'negative') throw new Error('Unknown case');
+  var arithmetic = [0,97,115,109,1,0,0,0,1,5,1,96,0,1,127,3,2,1,0,
+    7,7,1,3,114,117,110,0,0,10,21,1,19,0,
+    65,1,65,1,65,1,65,1,65,1,65,1,113,116,106,115,118,11];
+  var negative = [0,97,115,109,1,0,0,0,1,5,1,96,0,1,127,3,2,1,0,
+    7,7,1,3,114,117,110,0,0,10,6,1,4,0,65,0,11];
+  var instance = new WebAssembly.Instance(new WebAssembly.Module(new Uint8Array(mode === 'negative' ? negative : arithmetic)));
+  var calls = 0;
+  if (mode !== 'dormant') {
+    for (; calls < 20000; ++calls) {
+      if (instance.exports.run() !== 0) throw new Error('Arithmetic result mismatch');
+    }
+  }
+  // Allow original real-time sampling; leave the instance reachable globally.
+  var until = Date.now() + 400;
+  while (Date.now() < until) {}
+  document.getElementById('wasm-result').textContent = JSON.stringify({status: 'executed', mode: mode, calls: calls});
+  document.getElementById('result').textContent = 'MINETHROTTLE_BROWSER_READY';
+  document.title = 'MINETHROTTLE_BROWSER_READY';
+} catch (error) {
+  document.getElementById('wasm-result').textContent = JSON.stringify({status: 'exception', message: String(error)});
+  document.title = 'MINETHROTTLE_WASM_EXCEPTION';
+}
+</script>

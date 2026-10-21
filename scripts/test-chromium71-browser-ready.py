@@ -2,6 +2,8 @@
 """Run a benign local no-Wasm page as the dedicated user and observe renderer sandbox."""
 import argparse
 import hashlib
+import html
+import re
 import json
 import os
 from pathlib import Path
@@ -89,6 +91,20 @@ def disable_rseq_tunable(existing):
     return ':'.join(entries + ['glibc.pthread.rseq=0'])
 
 
+def wasm_result_from_dom(text):
+    match = re.search(r'<pre id="wasm-result">(.*?)</pre>', text, re.S)
+    return json.loads(html.unescape(match.group(1))) if match else None
+
+
+def counter_rows(text):
+    rows = []
+    for line in text.splitlines():
+        fields = line.split()
+        if len(fields) == 22:
+            rows.append([int(value) for value in fields[10:]])
+    return rows
+
+
 def limited_core():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
@@ -101,7 +117,11 @@ def main():
     parser.add_argument('--diagnostic-renderer-startup', action='store_true', help='Pause renderer using Chromium startup switch, attach GDB then unpause with SIGUSR1')
     parser.add_argument('--disable-glibc-rseq', action='store_true')
     parser.add_argument('--native-test-report', type=Path, help='Successful BPF tests for this staging and runtime configuration')
+    parser.add_argument('--wasm-counter-case', choices=('active', 'dormant', 'negative'))
+    parser.add_argument('--browser-ready-report', type=Path)
     args = parser.parse_args()
+    if args.wasm_counter_case and (args.diagnostic_cdp or args.diagnostic_gdb or args.diagnostic_renderer_startup):
+        raise SystemExit('Initial Wasm counter test must use normal browser lifecycle, not diagnostic mode')
     if args.diagnostic_renderer_startup and not args.diagnostic_gdb:
         raise SystemExit('--diagnostic-renderer-startup requires --diagnostic-gdb')
     if args.diagnostic_gdb and (not args.diagnostic_cdp or not shutil.which('gdb')):
@@ -119,6 +139,12 @@ def main():
             raise SystemExit('Native BPF report does not match this staging')
         if bool(native.get('rseq_disabled_by_controller')) != args.disable_glibc_rseq:
             raise SystemExit('Browser rseq setting must match successful native BPF tests')
+    if args.wasm_counter_case:
+        if not args.browser_ready_report:
+            raise SystemExit('Successful plain browser page report required first')
+        ready = json.loads(args.browser_ready_report.read_text())
+        if ready.get('status') != 'benign_page_nonroot_renderer_sandbox_observed' or ready.get('binary_sha256') != stage['binary_sha256'] or Path(ready['stage_report']).resolve() != args.stage_report.resolve() or bool(ready.get('rseq_disabled_by_controller')) != args.disable_glibc_rseq:
+            raise SystemExit('Plain browser report does not match this staging/runtime')
     account = pwd.getpwnam(stage['user'])
     if account.pw_uid != stage['uid'] or account.pw_uid == 0:
         raise SystemExit('Dedicated account identity differs')
@@ -136,7 +162,8 @@ def main():
         path = local / name
         path.mkdir(mode=0o700)
         os.chown(path, account.pw_uid, account.pw_gid)
-    fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures/browser-ready.html'
+    fixture_name = 'browser-wasm-counter.html' if args.wasm_counter_case else 'browser-ready.html'
+    fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures' / fixture_name
     page = local / 'browser-ready.html'
     shutil.copyfile(fixture, page)
     page.chmod(0o644)
@@ -148,7 +175,7 @@ def main():
                '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--no-first-run',
                '--no-default-browser-check', '--disable-background-networking', '--disable-component-update',
                '--disable-extensions', '--disable-sync', '--metrics-recording-only',
-               '--user-data-dir=' + str(local / 'profile'), '--dump-dom', page.as_uri()]
+               '--user-data-dir=' + str(local / 'profile'), '--dump-dom', page.as_uri() + ('#' + args.wasm_counter_case if args.wasm_counter_case else '')]
     if args.diagnostic_cdp:
         command.remove('--dump-dom')
         command += ['--remote-debugging-address=127.0.0.1', '--remote-debugging-port=0', '--enable-logging=stderr']
@@ -271,10 +298,34 @@ def main():
         report['status'] = 'browser_ready_failed_or_incomplete'
     if args.diagnostic_cdp:
         report['status'] = 'diagnostic_capture_only_not_browser_ready_validation'
+    if args.wasm_counter_case:
+        report.update(wasm_execution='synthetic fixture attempted', counter_case=args.wasm_counter_case,
+                      browser_ready_report=str(args.browser_ready_report.resolve()))
+        rows, copied = [], []
+        for path in local.iterdir():
+            if path.is_file() and not path.is_symlink() and path.suffix in ('.count', '.stack', '.txt', '.asmjs'):
+                shutil.copyfile(path, saved / path.name)
+                copied.append(path.name)
+                if path.suffix == '.count':
+                    rows.extend(counter_rows(path.read_text()))
+        report.update(original_patch_artifacts=copied, sample_rows=len(rows),
+                      counter_maxima=[max(row[i] for row in rows) for i in range(12)] if rows else None)
+        try:
+            report['wasm_fixture_result'] = wasm_result_from_dom(output)
+        except ValueError as error:
+            report['wasm_fixture_parse_error'] = str(error)
+        expected = [20000] + [0] * 11 if args.wasm_counter_case == 'active' else [0] * 12
+        report['expected_counters'] = expected
+        expected_calls = 0 if args.wasm_counter_case == 'dormant' else 20000
+        executed = report.get('wasm_fixture_result') == {'status': 'executed', 'mode': args.wasm_counter_case, 'calls': expected_calls}
+        if report['status'] == 'benign_page_nonroot_renderer_sandbox_observed' and executed and report['counter_maxima'] == expected:
+            report['status'] = 'browser_synthetic_counter_case_passed'
+        else:
+            report['status'] = 'browser_synthetic_counter_case_failed_or_unmeasurable'
     (saved / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
     print('Report:', saved / 'result.json')
-    return 0 if report['status'] == 'benign_page_nonroot_renderer_sandbox_observed' else 1
+    return 0 if report['status'] in ('benign_page_nonroot_renderer_sandbox_observed', 'browser_synthetic_counter_case_passed') else 1
 
 
 if __name__ == '__main__':

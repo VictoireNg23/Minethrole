@@ -43,3 +43,10 @@ class ProcStatus(unittest.TestCase):
         value = m.disable_rseq_tunable(original)
         self.assertEqual(value, 'glibc.malloc.arena_max=2:glibc.pthread.rseq=0')
         self.assertEqual(m.disable_rseq_tunable(value), value)
+
+    def test_wasm_dom_and_counts_are_independent_evidence(self):
+        text = '<pre id="wasm-result">{&quot;status&quot;:&quot;executed&quot;,&quot;mode&quot;:&quot;active&quot;,&quot;calls&quot;:20000}</pre>'
+        self.assertEqual(m.wasm_result_from_dom(text)['calls'], 20000)
+        self.assertEqual(m.counter_rows('1 12345.0 0\n'), [])
+        row = ' '.join(map(str, [1, 2, 0, 0, 1, 0, 0, 0, 0, 0, 20000] + [0] * 11))
+        self.assertEqual(m.counter_rows(row), [[20000] + [0] * 11])
