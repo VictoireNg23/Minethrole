@@ -97,5 +97,11 @@
     "report": "/tmp/minethrottle71-work-rwkni3hv/original-patches-0w04nngl/result.json",
     "compilation": "not run",
     "evidence": "user-supplied terminal JSON"
+  },
+  "gn_patched": {
+    "status": "passed",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/gn-config-ok6ykyck/result.json",
+    "output_directory": "/tmp/minethrottle71-work-rwkni3hv/src/out/MineThrottle71-config-cp8f0qce",
+    "evidence": "user-supplied terminal JSON"
   }
 }
