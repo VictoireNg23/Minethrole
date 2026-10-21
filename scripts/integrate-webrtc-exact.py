@@ -43,8 +43,16 @@ def main():
             raise RuntimeError('Refused: target absent, symlinked or without own .git')
         if Path(git(target, 'rev-parse', '--show-toplevel')).resolve() != target:
             raise RuntimeError('Unexpected repository root')
-        if git(target, 'status', '--porcelain=v1', '--untracked-files=all'):
-            raise RuntimeError('Refused: tracked or untracked changes in target; preserve and inspect')
+        status = git(target, 'status', '--porcelain=v1', '--untracked-files=all')
+        if status:
+            # A failed --no-checkout clone has HEAD but no index/worktree files.
+            # Accept only this exact state; never discard populated files or index.
+            empty_clone = (all(line.startswith('D  ') for line in status.splitlines())
+                           and not git(target, 'ls-files', '--stage')
+                           and {entry.name for entry in target.iterdir()} == {'.git'})
+            if not empty_clone:
+                raise RuntimeError('Refused: tracked or untracked changes in target; preserve and inspect')
+            print('Confirmed no-checkout clone: empty index and only .git present.', flush=True)
         if git(source, 'rev-parse', '--verify', 'FETCH_HEAD^{commit}') != REVISION:
             raise RuntimeError('Source FETCH_HEAD differs')
         if git(source, 'cat-file', '-t', REVISION + '^{tree}') != 'tree':
