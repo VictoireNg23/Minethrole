@@ -1,0 +1,11 @@
+{
+  "candidate_revision": "c6a8d114b060f5f68637e8897712a24252402377",
+  "existing_modern_revision": "d38909eb68d85b91259f4bf20fe5ebcd38461bc2",
+  "selection": "Latest accessible first-parent commit before 2018-12-14T00:00:00Z in the user's existing local depot_tools history",
+  "evidence": "User-supplied rev-list output, exit 0; repository is not shallow",
+  "compatibility": "not yet validated",
+  "preparation": "pending user execution of isolated snapshot script",
+  "automatic_updates": false,
+  "python_executable": "/usr/bin/python2",
+  "ninja_executable": "/usr/bin/ninja"
+}
