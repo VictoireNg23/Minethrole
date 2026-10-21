@@ -1,3 +1,5 @@
+> **Travail en cours : Chromium 71 / C++ / V8.** La piste Rust/Wasmtime est abandonnée. Avant toute installation sur votre PC Ubuntu, consulter [le diagnostic initial](docs/diagnostic-ubuntu-chromium71.md) et exécuter `bash scripts/diagnose-ubuntu.sh` depuis le disque prévu pour la compilation. La procédure sera adaptée après lecture de la sortie. Les instructions originales des auteurs sont conservées ci-dessous ; leur compatibilité avec votre machine reste à vérifier.
+
 # MineThrottle
 
 MineThrottle is a browser-based defense mechanism against Wasm cryptojacking. MineThrottle instruments Wasm code on the fly to detect mining behavior using block-level program profiling. It then throttles drive-by mining behavior based on a user-configurable policy.

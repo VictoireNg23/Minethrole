@@ -1,5 +1,7 @@
 # Plan technique de réimplémentation fidèle de MineThrottle
 
+> Document historique conservé. La piste Rust/Wasmtime décrite ici est abandonnée à la demande de l’utilisateur. La priorité actuelle est Chromium 71 et les patches C++ originaux ; voir [le diagnostic Ubuntu](diagnostic-ubuntu-chromium71.md).
+
 Analyse du 21 octobre 2026. Périmètre : analyse et conception uniquement ; aucun moteur installé, aucun Wasm exécuté, aucune compilation. Les patches et le script original restent intacts.
 
 ## 1. Sources et niveau de preuve
