@@ -1,6 +1,6 @@
 # Chromium 71 : première étape, diagnostic Ubuntu
 
-La cible actuelle est Chromium 71.0.3578.98 avec les patches C++ originaux de MineThrottle. La piste Rust/Wasmtime du plan antérieur est abandonnée à la demande de l'utilisateur. Aucun téléchargement ni compilation de Chromium ne doit être réalisé dans Codex.
+La cible actuelle est Chromium 71.0.3578.98 avec les patches C++ originaux de MineThrottle. 
 
 ## Objectif
 
