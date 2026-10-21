@@ -84,5 +84,18 @@
     "integration_report": "/tmp/minethrottle71-work-rwkni3hv/tools-link-m2r24lb6/result.json",
     "status": "linked; compilation not validated",
     "evidence": "user-supplied Grid5000 outputs"
+  },
+  "gn_unpatched": {
+    "status": "passed",
+    "targets": 10601,
+    "files": 1756,
+    "report": "/tmp/minethrottle71-work-rwkni3hv/gn-config-a4m2ev2z/result.json",
+    "evidence": "user-supplied terminal output"
+  },
+  "original_patch_application": {
+    "status": "both_original_patches_applied",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/original-patches-0w04nngl/result.json",
+    "compilation": "not run",
+    "evidence": "user-supplied terminal JSON"
   }
 }
