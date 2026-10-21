@@ -1,0 +1,2758 @@
+{
+  "id": "original-v8-patch",
+  "patch_sha256": "72c3adef6f566e7de6b6b7f0d1c6a12f0384098be3601fbcbe2272f1861ee563",
+  "window_size": 5,
+  "stored": [
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 0,
+      "key": 46,
+      "opcodes": [
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 1,
+      "key": 37,
+      "opcodes": [
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 2,
+      "key": 47,
+      "opcodes": [
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 3,
+      "key": 44,
+      "opcodes": [
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 4,
+      "key": 49,
+      "opcodes": [
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 5,
+      "key": 55,
+      "opcodes": [
+        124
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 6,
+      "key": 64,
+      "opcodes": [
+        133
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 7,
+      "key": 67,
+      "opcodes": [
+        136
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 8,
+      "key": 65,
+      "opcodes": [
+        134
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 1,
+      "rank": 9,
+      "key": 62,
+      "opcodes": [
+        131
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 0,
+      "key": 5818,
+      "opcodes": [
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 1,
+      "key": 4597,
+      "opcodes": [
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 2,
+      "key": 5459,
+      "opcodes": [
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 3,
+      "key": 5707,
+      "opcodes": [
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 4,
+      "key": 6071,
+      "opcodes": [
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 5,
+      "key": 6074,
+      "opcodes": [
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 6,
+      "key": 5702,
+      "opcodes": [
+        115,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 7,
+      "key": 5827,
+      "opcodes": [
+        116,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 8,
+      "key": 6820,
+      "opcodes": [
+        124,
+        124
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 2,
+      "rank": 9,
+      "key": 5695,
+      "opcodes": [
+        115,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 0,
+      "key": 715660,
+      "opcodes": [
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 1,
+      "key": 671494,
+      "opcodes": [
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 2,
+      "key": 565480,
+      "opcodes": [
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 3,
+      "key": 746780,
+      "opcodes": [
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 4,
+      "key": 702005,
+      "opcodes": [
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 5,
+      "key": 702008,
+      "opcodes": [
+        115,
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 6,
+      "key": 701393,
+      "opcodes": [
+        115,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 7,
+      "key": 747139,
+      "opcodes": [
+        118,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 8,
+      "key": 565475,
+      "opcodes": [
+        106,
+        115,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 3,
+      "rank": 9,
+      "key": 671503,
+      "opcodes": [
+        113,
+        116,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 0,
+      "key": 82593808,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 1,
+      "key": 88026229,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 2,
+      "key": 86346662,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 3,
+      "key": 91853977,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 4,
+      "key": 69554084,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 5,
+      "key": 91898143,
+      "opcodes": [
+        118,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 6,
+      "key": 69554087,
+      "opcodes": [
+        106,
+        115,
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 7,
+      "key": 88026224,
+      "opcodes": [
+        116,
+        106,
+        115,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 8,
+      "key": 69553472,
+      "opcodes": [
+        106,
+        115,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 4,
+      "rank": 9,
+      "key": 86271376,
+      "opcodes": [
+        115,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 0,
+      "key": 10159038433,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 1,
+      "key": 11298039217,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 2,
+      "key": 10620639463,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 3,
+      "key": 10827226211,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 4,
+      "key": 8555152379,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 5,
+      "key": 10827226214,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 6,
+      "key": 10827225599,
+      "opcodes": [
+        116,
+        106,
+        115,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 7,
+      "key": 8555077093,
+      "opcodes": [
+        106,
+        115,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 8,
+      "key": 10611379294,
+      "opcodes": [
+        115,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 9,
+      "key": 8555152738,
+      "opcodes": [
+        106,
+        115,
+        118,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 0,
+      "key": 1331748824000,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 1,
+      "key": 1052283742654,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 2,
+      "key": 1306338653995,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 3,
+      "key": 1249561727303,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 4,
+      "key": 1389658823740,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 5,
+      "key": 1331748748714,
+      "opcodes": [
+        116,
+        106,
+        115,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 6,
+      "key": 1052274482485,
+      "opcodes": [
+        106,
+        115,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 7,
+      "key": 1331748824359,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 8,
+      "key": 1052283786820,
+      "opcodes": [
+        106,
+        115,
+        118,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 6,
+      "rank": 9,
+      "key": 1305199653211,
+      "opcodes": [
+        115,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 0,
+      "key": 163805105352037,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 1,
+      "key": 129430900346488,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 2,
+      "key": 153696092458316,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 3,
+      "key": 160679654441434,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 4,
+      "key": 163805096091868,
+      "opcodes": [
+        116,
+        106,
+        115,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 5,
+      "key": 163805105396203,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 6,
+      "key": 129429761345704,
+      "opcodes": [
+        106,
+        115,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 7,
+      "key": 160539557344997,
+      "opcodes": [
+        115,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 8,
+      "key": 170928035320064,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 7,
+      "rank": 9,
+      "key": 170928035320067,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 0,
+      "key": 20148027958300597,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 1,
+      "key": 18904619372372905,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 2,
+      "key": 15920000742618073,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 3,
+      "key": 20148026819299813,
+      "opcodes": [
+        116,
+        106,
+        115,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 4,
+      "key": 15919860645521636,
+      "opcodes": [
+        106,
+        115,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 5,
+      "key": 19746365553434678,
+      "opcodes": [
+        115,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 6,
+      "key": 19763597496296426,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 7,
+      "key": 21024148344367919,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 8,
+      "key": 19763597496296429,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 8,
+      "rank": 9,
+      "key": 21024148344368278,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 0,
+      "key": 2325268182801867361,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 1,
+      "key": 2478207438870973480,
+      "opcodes": [
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 2,
+      "key": 2478207298773877043,
+      "opcodes": [
+        116,
+        106,
+        115,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 3,
+      "key": 1958142859399161275,
+      "opcodes": [
+        106,
+        115,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 4,
+      "key": 2428802963072465431,
+      "opcodes": [
+        115,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 5,
+      "key": 1958160091342023023,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 6,
+      "key": 2430922492044460445,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 7,
+      "key": 2585970246357254074,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 8,
+      "key": 1958160091342023026,
+      "opcodes": [
+        106,
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        116
+      ]
+    },
+    {
+      "profile": "coinhive",
+      "window": 9,
+      "rank": 9,
+      "key": 2430922492044460804,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106,
+        115,
+        118,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 0,
+      "key": 37,
+      "opcodes": [
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 1,
+      "key": 46,
+      "opcodes": [
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 2,
+      "key": 47,
+      "opcodes": [
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 3,
+      "key": 55,
+      "opcodes": [
+        124
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 4,
+      "key": 64,
+      "opcodes": [
+        133
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 5,
+      "key": 44,
+      "opcodes": [
+        113
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 6,
+      "key": 62,
+      "opcodes": [
+        131
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 7,
+      "key": 67,
+      "opcodes": [
+        136
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 8,
+      "key": 57,
+      "opcodes": [
+        126
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 1,
+      "rank": 9,
+      "key": 65,
+      "opcodes": [
+        134
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 0,
+      "key": 715660,
+      "opcodes": [
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 1,
+      "key": 701752,
+      "opcodes": [
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 2,
+      "key": 565478,
+      "opcodes": [
+        106,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 3,
+      "key": 565591,
+      "opcodes": [
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 4,
+      "key": 565477,
+      "opcodes": [
+        106,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 5,
+      "key": 715661,
+      "opcodes": [
+        116,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 6,
+      "key": 701629,
+      "opcodes": [
+        115,
+        115,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 7,
+      "key": 700532,
+      "opcodes": [
+        115,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 8,
+      "key": 838915,
+      "opcodes": [
+        124,
+        124,
+        124
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 3,
+      "rank": 9,
+      "key": 715658,
+      "opcodes": [
+        116,
+        106,
+        113
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 0,
+      "key": 10827225958,
+      "opcodes": [
+        116,
+        106,
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 1,
+      "key": 8555121259,
+      "opcodes": [
+        106,
+        115,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 2,
+      "key": 10616811713,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 3,
+      "key": 10616811712,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 4,
+      "key": 10827239866,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 5,
+      "key": 8556831944,
+      "opcodes": [
+        106,
+        116,
+        106,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 6,
+      "key": 10827225835,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 7,
+      "key": 8555106131,
+      "opcodes": [
+        106,
+        115,
+        115,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 8,
+      "key": 10614950959,
+      "opcodes": [
+        115,
+        115,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 9,
+      "key": 8556832057,
+      "opcodes": [
+        106,
+        116,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 0,
+      "key": 163805101524287,
+      "opcodes": [
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 1,
+      "key": 129430429533229,
+      "opcodes": [
+        106,
+        115,
+        116,
+        106,
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 2,
+      "key": 160621744410574,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 3,
+      "key": 163805101524286,
+      "opcodes": [
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 4,
+      "key": 163805311938532,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 5,
+      "key": 129456310485373,
+      "opcodes": [
+        106,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 6,
+      "key": 129430429533106,
+      "opcodes": [
+        106,
+        115,
+        116,
+        106,
+        115,
+        115,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 7,
+      "key": 160621744395446,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        115,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 8,
+      "key": 163805099663533,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 7,
+      "rank": 9,
+      "key": 129456312196058,
+      "opcodes": [
+        106,
+        116,
+        106,
+        116,
+        106,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 0,
+      "key": 2478207380960942620,
+      "opcodes": [
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 1,
+      "key": 1958152968408227245,
+      "opcodes": [
+        106,
+        115,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 2,
+      "key": 2478210564318056333,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 3,
+      "key": 1958544521333213935,
+      "opcodes": [
+        106,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 4,
+      "key": 2430046371187579741,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        115,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 5,
+      "key": 2478207380960927492,
+      "opcodes": [
+        116,
+        106,
+        115,
+        116,
+        106,
+        115,
+        115,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 6,
+      "key": 1958152968406366492,
+      "opcodes": [
+        106,
+        115,
+        116,
+        106,
+        115,
+        115,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 7,
+      "key": 2430046370958707132,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        115,
+        106,
+        116,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 8,
+      "key": 2478207352809596575,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        106,
+        116,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 9,
+      "rank": 9,
+      "key": 1958149505792663710,
+      "opcodes": [
+        106,
+        115,
+        115,
+        106,
+        116,
+        106,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 0,
+      "key": 37,
+      "opcodes": [
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 1,
+      "key": 46,
+      "opcodes": [
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 2,
+      "key": 47,
+      "opcodes": [
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 3,
+      "key": 44,
+      "opcodes": [
+        113
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 4,
+      "key": 55,
+      "opcodes": [
+        124
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 5,
+      "key": 64,
+      "opcodes": [
+        133
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 6,
+      "key": 67,
+      "opcodes": [
+        136
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 7,
+      "key": 104,
+      "opcodes": [
+        173
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 8,
+      "key": 65,
+      "opcodes": [
+        134
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 1,
+      "rank": 9,
+      "key": 57,
+      "opcodes": [
+        126
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 0,
+      "key": 701638,
+      "opcodes": [
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 1,
+      "key": 565591,
+      "opcodes": [
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 2,
+      "key": 715661,
+      "opcodes": [
+        116,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 3,
+      "key": 671494,
+      "opcodes": [
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 4,
+      "key": 715658,
+      "opcodes": [
+        116,
+        106,
+        113
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 5,
+      "key": 565232,
+      "opcodes": [
+        106,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 6,
+      "key": 715660,
+      "opcodes": [
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 7,
+      "key": 565477,
+      "opcodes": [
+        106,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 8,
+      "key": 701752,
+      "opcodes": [
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 3,
+      "rank": 9,
+      "key": 701639,
+      "opcodes": [
+        115,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 0,
+      "key": 10827195700,
+      "opcodes": [
+        116,
+        106,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 1,
+      "key": 10827225844,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 2,
+      "key": 8555107237,
+      "opcodes": [
+        106,
+        115,
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 3,
+      "key": 8556832057,
+      "opcodes": [
+        106,
+        116,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 4,
+      "key": 10615087120,
+      "opcodes": [
+        115,
+        115,
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 5,
+      "key": 10615087007,
+      "opcodes": [
+        115,
+        115,
+        115,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 6,
+      "key": 10827239867,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 7,
+      "key": 10159038185,
+      "opcodes": [
+        113,
+        116,
+        106,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 8,
+      "key": 8551399523,
+      "opcodes": [
+        106,
+        113,
+        116,
+        106,
+        113
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 9,
+      "key": 10616811826,
+      "opcodes": [
+        115,
+        116,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 0,
+      "key": 163805099799581,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        115,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 1,
+      "key": 129430217394391,
+      "opcodes": [
+        106,
+        115,
+        115,
+        115,
+        115,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 2,
+      "key": 129374123389285,
+      "opcodes": [
+        106,
+        113,
+        116,
+        106,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 3,
+      "key": 163804643750759,
+      "opcodes": [
+        116,
+        106,
+        113,
+        116,
+        106,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 4,
+      "key": 163805311938418,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 5,
+      "key": 160595653044298,
+      "opcodes": [
+        115,
+        115,
+        115,
+        116,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 6,
+      "key": 160595651333501,
+      "opcodes": [
+        115,
+        115,
+        115,
+        115,
+        116,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 7,
+      "key": 129456310471351,
+      "opcodes": [
+        106,
+        116,
+        106,
+        115,
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 8,
+      "key": 163805311908274,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 7,
+      "rank": 9,
+      "key": 153696088705462,
+      "opcodes": [
+        113,
+        116,
+        106,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 0,
+      "key": 1958149758959747257,
+      "opcodes": [
+        106,
+        115,
+        115,
+        115,
+        115,
+        116,
+        106,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 1,
+      "key": 2478207354867865547,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        115,
+        115,
+        116,
+        106,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 2,
+      "key": 2478200455305237508,
+      "opcodes": [
+        116,
+        106,
+        113,
+        116,
+        106,
+        113,
+        116,
+        106,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 3,
+      "key": 1957301112756498469,
+      "opcodes": [
+        106,
+        113,
+        116,
+        106,
+        113,
+        116,
+        106,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 4,
+      "key": 2325268126024940302,
+      "opcodes": [
+        113,
+        116,
+        106,
+        113,
+        116,
+        106,
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 5,
+      "key": 2478200455308945220,
+      "opcodes": [
+        116,
+        106,
+        113,
+        116,
+        106,
+        115,
+        115,
+        115,
+        115
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 6,
+      "key": 2429651609024541224,
+      "opcodes": [
+        115,
+        115,
+        115,
+        115,
+        116,
+        106,
+        116,
+        106,
+        113
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 7,
+      "key": 2478210564316331627,
+      "opcodes": [
+        116,
+        106,
+        116,
+        106,
+        115,
+        115,
+        115,
+        115,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 8,
+      "key": 2429651634907189901,
+      "opcodes": [
+        115,
+        115,
+        115,
+        116,
+        106,
+        116,
+        106,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 9,
+      "rank": 9,
+      "key": 2429654818472977162,
+      "opcodes": [
+        115,
+        115,
+        116,
+        106,
+        116,
+        106,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_2",
+      "window": 5,
+      "rank": 0,
+      "key": 8560659694,
+      "opcodes": [
+        106,
+        118,
+        113,
+        116,
+        106
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_2",
+      "window": 5,
+      "rank": 1,
+      "key": 10827270986,
+      "opcodes": [
+        116,
+        106,
+        118,
+        113,
+        116
+      ]
+    },
+    {
+      "profile": "unknown_algorithm_2",
+      "window": 5,
+      "rank": 2,
+      "key": 11298039220,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        118
+      ]
+    }
+  ],
+  "active": [
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 0,
+      "key": 10159038433,
+      "opcodes": [
+        113,
+        116,
+        106,
+        115,
+        118
+      ],
+      "counter": 0
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 1,
+      "key": 11298039217,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        115
+      ],
+      "counter": 1
+    },
+    {
+      "profile": "coinhive",
+      "window": 5,
+      "rank": 2,
+      "key": 10620639463,
+      "opcodes": [
+        115,
+        118,
+        113,
+        116,
+        106
+      ],
+      "counter": 2
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 0,
+      "key": 10827225958,
+      "opcodes": [
+        116,
+        106,
+        115,
+        116,
+        106
+      ],
+      "counter": 3
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 1,
+      "key": 8555121259,
+      "opcodes": [
+        106,
+        115,
+        116,
+        106,
+        115
+      ],
+      "counter": 4
+    },
+    {
+      "profile": "cryptoloot",
+      "window": 5,
+      "rank": 2,
+      "key": 10616811713,
+      "opcodes": [
+        115,
+        116,
+        106,
+        115,
+        116
+      ],
+      "counter": 5
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 0,
+      "key": 10827195700,
+      "opcodes": [
+        116,
+        106,
+        113,
+        116,
+        106
+      ],
+      "counter": 6
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 1,
+      "key": 10827225844,
+      "opcodes": [
+        116,
+        106,
+        115,
+        115,
+        115
+      ],
+      "counter": 7
+    },
+    {
+      "profile": "unknown_algorithm_1",
+      "window": 5,
+      "rank": 2,
+      "key": 8555107237,
+      "opcodes": [
+        106,
+        115,
+        115,
+        115,
+        115
+      ],
+      "counter": 8
+    },
+    {
+      "profile": "unknown_algorithm_2",
+      "window": 5,
+      "rank": 0,
+      "key": 8560659694,
+      "opcodes": [
+        106,
+        118,
+        113,
+        116,
+        106
+      ],
+      "counter": 9
+    },
+    {
+      "profile": "unknown_algorithm_2",
+      "window": 5,
+      "rank": 1,
+      "key": 10827270986,
+      "opcodes": [
+        116,
+        106,
+        118,
+        113,
+        116
+      ],
+      "counter": 10
+    },
+    {
+      "profile": "unknown_algorithm_2",
+      "window": 5,
+      "rank": 2,
+      "key": 11298039220,
+      "opcodes": [
+        118,
+        113,
+        116,
+        106,
+        118
+      ],
+      "counter": 11
+    }
+  ],
+  "means": [
+    [
+      96406.42630749,
+      78428.75105923,
+      78428.7930022
+    ],
+    [
+      163251.74200967,
+      161127.55323276,
+      82687.87474725
+    ],
+    [
+      55807.11561617,
+      44197.36864725,
+      41896.03206607
+    ],
+    [
+      62494.68955703,
+      62494.57347204,
+      39258.05126357
+    ]
+  ],
+  "stddev": [
+    [
+      31325.22361171,
+      25846.67274627,
+      25846.66822102
+    ],
+    [
+      98266.49642881,
+      98859.45212208,
+      48842.10807107
+    ],
+    [
+      29273.62299923,
+      22507.89459648,
+      21304.64701362
+    ],
+    [
+      16477.6506124,
+      16477.61705602,
+      10583.10407066
+    ]
+  ],
+  "normalized": [
+    [
+      0.65601817,
+      0.53368523,
+      0.53368552
+    ],
+    [
+      0.66954543,
+      0.66083348,
+      0.33912832
+    ],
+    [
+      0.67561316,
+      0.53506302,
+      0.50720254
+    ],
+    [
+      0.6462234,
+      0.6462222,
+      0.40594603
+    ]
+  ],
+  "interval_cpu_ms": 500,
+  "cosine_threshold": 0.99,
+  "sigma_threshold": 3.0,
+  "original_defensive_default": false,
+  "sleep_seconds": 10,
+  "timer_wall_ms": 50
+}
