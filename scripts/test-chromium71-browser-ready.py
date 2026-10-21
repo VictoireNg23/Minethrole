@@ -12,6 +12,7 @@ import signal
 import subprocess
 import tempfile
 import time
+import urllib.request
 
 
 def parse_status(text):
@@ -53,6 +54,7 @@ def limited_core():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage-report', required=True, type=Path)
+    parser.add_argument('--diagnostic-cdp', action='store_true', help='Observe localhost DevTools targets; intentional stop, no passing verdict')
     args = parser.parse_args()
     if os.geteuid() != 0:
         raise SystemExit('Run the controller as root; Chromium itself is launched as the dedicated user')
@@ -87,11 +89,17 @@ def main():
                '--no-default-browser-check', '--disable-background-networking', '--disable-component-update',
                '--disable-extensions', '--disable-sync', '--metrics-recording-only',
                '--user-data-dir=' + str(local / 'profile'), '--dump-dom', page.as_uri()]
+    if args.diagnostic_cdp:
+        command.remove('--dump-dom')
+        command += ['--remote-debugging-address=127.0.0.1', '--remote-debugging-port=0', '--enable-logging=stderr']
     report = {'status': 'incomplete', 'command': command, 'binary_sha256': digest.hexdigest(),
               'local_directory': str(local), 'results_directory': str(saved),
               'wasm_execution': 'not run', 'dataset_execution': 'not run', 'sandbox_disabled_by_command': False}
     print('Persistent results:', saved, flush=True)
     samples = {}
+    target_snapshots = []
+    diagnostic_stop = False
+    last_probe = 0.0
     with (saved / 'stdout.html').open('w+') as stdout, (saved / 'stderr.log').open('w+') as stderr:
         process = subprocess.Popen(command, cwd=local, env=env, stdout=stdout, stderr=stderr,
                                    start_new_session=True, preexec_fn=limited_core)
@@ -103,6 +111,23 @@ def main():
                     sample = observe(pid)
                     if sample:
                         samples[pid] = sample
+                if args.diagnostic_cdp:
+                    elapsed = time.monotonic() - started
+                    port_file = local / 'profile/DevToolsActivePort'
+                    if elapsed - last_probe >= 0.5 and port_file.is_file():
+                        last_probe = elapsed
+                        try:
+                            port = int(port_file.read_text().splitlines()[0])
+                            if not 1 <= port <= 65535:
+                                raise ValueError('Invalid debugger port')
+                            with urllib.request.urlopen('http://127.0.0.1:%d/json/list' % port, timeout=1) as response:
+                                targets = json.load(response)
+                            target_snapshots.append({'elapsed': round(elapsed, 2), 'targets': targets})
+                        except (OSError, ValueError) as error:
+                            target_snapshots.append({'elapsed': round(elapsed, 2), 'error': str(error)})
+                    if elapsed >= 6:
+                        diagnostic_stop = True
+                        break
                 if time.monotonic() - started > 20:
                     timed_out = True
                     break
@@ -129,10 +154,16 @@ def main():
                            item['uid'] and int(item['uid'].split()[1]) == account.pw_uid and
                            '--no-sandbox' not in item['command'] for item in samples.values())
     report['renderer_seccomp_and_nonroot_observed'] = sandbox_observed
+    if args.diagnostic_cdp:
+        report.update(devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
+                      page_title_marker_observed=any(target.get('title') == 'MINETHROTTLE_BROWSER_READY'
+                          for snapshot in target_snapshots for target in snapshot.get('targets', [])))
     if not timed_out and process.returncode == 0 and report['page_marker_present'] and sandbox_observed:
         report['status'] = 'benign_page_nonroot_renderer_sandbox_observed'
     else:
         report['status'] = 'browser_ready_failed_or_incomplete'
+    if args.diagnostic_cdp:
+        report['status'] = 'diagnostic_capture_only_not_browser_ready_validation'
     (saved / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
     print('Report:', saved / 'result.json')
