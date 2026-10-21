@@ -41,6 +41,11 @@ def test_command(user, binary, xml_path, diagnostic=False):
                      '--gtest_output=xml:' + str(xml_path)]
 
 
+def disable_rseq_tunable(existing):
+    entries = [entry for entry in existing.split(':') if entry and entry.split('=', 1)[0] != 'glibc.pthread.rseq']
+    return ':'.join(entries + ['glibc.pthread.rseq=0'])
+
+
 def no_core():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
@@ -49,6 +54,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage-report', required=True, type=Path)
     parser.add_argument('--diagnostic-gdb', action='store_true', help='Follow only CreateThread subprocess under GDB; no passing verdict')
+    parser.add_argument('--disable-glibc-rseq', action='store_true', help='Disable optional glibc rseq registration for this process tree only')
     args = parser.parse_args()
     if args.diagnostic_gdb and not shutil.which('gdb'):
         raise SystemExit('GDB required for this diagnostic')
@@ -77,8 +83,12 @@ def main():
               'stage_report': str(args.stage_report.resolve()), 'results_directory': str(saved),
               'local_directory': str(local), 'browser_started': False, 'dataset_execution': 'not run'}
     print('Persistent results:', saved, flush=True)
+    env = dict(os.environ, HOME=str(local))
+    if args.disable_glibc_rseq:
+        env['GLIBC_TUNABLES'] = disable_rseq_tunable(env.get('GLIBC_TUNABLES', ''))
+    result.update(rseq_disabled_by_controller=args.disable_glibc_rseq, glibc_tunables=env.get('GLIBC_TUNABLES'))
     with (saved / 'stdout.log').open('w+') as log:
-        process = subprocess.Popen(command, cwd=local, env=dict(os.environ, HOME=str(local)),
+        process = subprocess.Popen(command, cwd=local, env=env,
                                    stdout=log, stderr=subprocess.STDOUT, start_new_session=True, preexec_fn=no_core)
         timeout = False
         try:

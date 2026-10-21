@@ -27,3 +27,8 @@ class NativeBpfResults(unittest.TestCase):
         self.assertIn('p $_siginfo', args)
         normal = m.test_command('minethrottle-test', Path('/tmp/tests'), Path('/tmp/result.xml'))
         self.assertNotIn('set follow-fork-mode child', normal)
+
+    def test_rseq_tunable_preserves_other_host_settings(self):
+        value = m.disable_rseq_tunable('glibc.malloc.arena_max=2:glibc.pthread.rseq=1')
+        self.assertEqual(value, 'glibc.malloc.arena_max=2:glibc.pthread.rseq=0')
+        self.assertEqual(m.disable_rseq_tunable(value), value)
