@@ -1,0 +1,32 @@
+--- a/src/d8.cc
++++ b/src/d8.cc
+@@ -6,6 +6,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/stat.h>
++
++#if defined(__linux__)
++#include <signal.h>
++#include <sys/time.h>
++#endif
+ 
+ #include <algorithm>
+ #include <fstream>
+@@ -3584,6 +3589,17 @@
+       WriteIgnitionDispatchCountersFile(isolate);
+     }
+ 
++#if defined(__linux__)
++    // MineThrottle's timer must not sample globals during d8 teardown.
++    // Ignore pending/new alarms process-wide before disarming the timer.
++    struct sigaction ignore_alarm = {};
++    ignore_alarm.sa_handler = SIG_IGN;
++    CHECK_EQ(0, sigemptyset(&ignore_alarm.sa_mask));
++    CHECK_EQ(0, sigaction(SIGALRM, &ignore_alarm, nullptr));
++    struct itimerval stopped_timer = {};
++    CHECK_EQ(0, setitimer(ITIMER_REAL, &stopped_timer, nullptr));
++#endif
++
+     // Shut down contexts and collect garbage.
+     cached_code_map_.clear();
+     evaluation_context_.Reset();
