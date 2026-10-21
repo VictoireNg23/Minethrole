@@ -59,5 +59,13 @@
     "evidence": "user-supplied terminal output",
     "expected_devtools_revision": "5f7cd2497d7a643125c3b6eb910d99ba28be6899",
     "proposed_recovery": "exact devtools mirror recovery verified by user; resume using alternative gclient config, cache disabled and in-process _DeleteOrMove preservation guard"
+  },
+  "mirror_sync_preflight_latest": {
+    "status": "cli_check_failed_sync_not_launched",
+    "diagnostic_directory": "/tmp/minethrottle71-work-rwkni3hv/sync-nohooks-i3t08i_t",
+    "preservation_guard": "enabled",
+    "cause": "our driver placed --gclientfile before sync; historical dispatcher fell back to general help",
+    "correction": "shared argument builder puts sync first for both help and synchronization; confirmed against historical dispatcher",
+    "actual_sync": "not run by this attempt"
   }
 }

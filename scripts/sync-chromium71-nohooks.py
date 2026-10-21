@@ -72,6 +72,15 @@ def sync_arguments():
             '--revision', 'src@' + CHROMIUM, '--revision', 'src/v8@' + V8]
 
 
+def gclient_arguments(gclientfile, help_only=False):
+    if gclientfile not in ('.gclient', '.gclient.minethrottle-mirror'):
+        raise ValueError('Unsupported gclient configuration name')
+    # The 2018 dispatcher selects the command from args[0] BEFORE parsing
+    # options. A leading --gclientfile falls back to general help.
+    command = ['sync', '--gclientfile=' + gclientfile]
+    return command + (['--help'] if help_only else sync_arguments()[1:])
+
+
 PRESERVATION_DRIVER = """from __future__ import print_function
 import os, runpy, sys
 tools = sys.argv[1]
@@ -214,7 +223,7 @@ def main():
         elif entry['status'] in ('occupied_destination_untouched', 'destination_symlink_deferred', 'destination_outside_workspace'):
             raise ValueError('Unresolved destination conflict in seed report: ' + entry['path'])
     print('Configuration:', args.gclientfile, flush=True)
-    print('Planned guarded gclient arguments:', json.dumps(sync_arguments()), flush=True)
+    print('Planned guarded gclient arguments:', json.dumps(gclient_arguments(args.gclientfile)), flush=True)
     if not args.sync:
         print('PLAN ONLY. Add --sync to enable downloads; no gclient or network operation run.')
         return 0
@@ -228,8 +237,8 @@ def main():
     with driver.open('x') as output:
         output.write(PRESERVATION_DRIVER)
     prefix = [str(workspace / 'with-tools.sh'), 'python', str(driver),
-              str(tools / 'depot_tools'), '--gclientfile=' + args.gclientfile]
-    command = prefix + sync_arguments()
+              str(tools / 'depot_tools')]
+    command = prefix + gclient_arguments(args.gclientfile)
     state = {'command': command, 'status': 'checking_cli', 'hooks': 'disabled', 'pre_hooks': 'disabled',
              'build': 'not run', 'git_mirror_policy': 'disabled; historical resolver must confirm',
              'result_file': str(result_file), 'gclientfile': args.gclientfile,
@@ -237,7 +246,7 @@ def main():
              'devtools_exact_mirror_selected': mirrored}
     result_file.write_text(json.dumps(state, indent=2) + '\n')
     print('Diagnostic directory:', logs, flush=True)
-    help_result = logged_command(prefix + ['sync', '--help'], workspace, env, logs / 'sync-help.log', 60)
+    help_result = logged_command(prefix + gclient_arguments(args.gclientfile, help_only=True), workspace, env, logs / 'sync-help.log', 60)
     help_text = (logs / 'sync-help.log').read_text(errors='replace')
     if help_result['status'] != 'finished' or help_result['underlying_exit_code'] != 0 or not all(flag in help_text for flag in ('--nohooks', '--noprehooks', '--revision', 'MINETHROTTLE_PRESERVATION_GUARD=enabled')):
         state.update(status='cli_check_failed', cli=help_result)
