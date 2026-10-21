@@ -1,0 +1,7 @@
+# Outils reliés ; vérifier la génération GN avant compilation
+
+Le rapport Grid5000 `tools-link-m2r24lb6/result.json` confirme les trois liens GN, Clang et sysroot créés dans le workspace isolé. Aucun hook ni build n'a été lancé.
+
+Le script original des auteurs utilise `cc_wrapper="ccache" use_jumbo_build=true is_debug=false enable_nacl=false` pour `gn gen`, puis compile la cible `chrome`. Le nouveau script `configure-chromium71.py WORKSPACE TOOLS_REPORT` reprend exactement ces arguments dans un nouveau répertoire sous `src/out/`, sans réutiliser ni écraser un ancien build. Il lance uniquement la génération GN, avec le Python historique fourni par le lanceur isolé. GN peut exécuter les scripts de configuration référencés par les BUILD.gn et écrire ses fichiers générés dans le nouveau répertoire ; ce n'est pas une lecture seule. Aucune commande Ninja, aucun hook global, aucune installation système ni téléchargement explicite n'est lancé par notre wrapper.
+
+Cette étape prépare la configuration des sources encore non patchées pour faire apparaître les prérequis manquants (binutils, fichiers générés ou bibliothèques hôtes, par exemple). Un succès ne valide ni la compilation ni MineThrottle. Il faudra appliquer les patches après une nouvelle vérification, puis régénérer la configuration avant de compiler. En cas d'erreur, conserver le journal et corriger le prérequis identifié avant toute suite.

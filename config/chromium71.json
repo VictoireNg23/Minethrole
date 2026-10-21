@@ -12,17 +12,13 @@
   "workspace": "/tmp/minethrottle71-work-rwkni3hv",
   "object_storage": "shared local clones borrowing original chromium/src and chromium/src/v8 object stores; retain originals",
   "dependency_sync": {
-    "status": "incomplete_timeout",
-    "elapsed_seconds": 3600.21,
-    "underlying_exit_code": -15,
-    "last_reported_task": "src",
-    "diagnostic_directory": "/tmp/minethrottle71-work-rwkni3hv/sync-nohooks-n5r3py1y",
-    "cause": "not yet established; -15 is timeout termination by our wrapper",
+    "status": "sync_exit_zero_primary_heads_verified_nohooks",
+    "underlying_exit_code": 0,
+    "elapsed_seconds": 31.5,
+    "report": "/tmp/minethrottle71-work-rwkni3hv/sync-nohooks-3svh862l/result.json",
+    "evidence": "user-supplied terminal JSON",
     "hooks": "disabled",
-    "build": "not run",
-    "evidence": "user-supplied terminal result",
-    "cache_diagnostic": "new Chromium mirror staging directory and lock observed under git-cache; previous wrapper enabled GIT_CACHE_PATH; exact waiting subprocess not established from uploaded excerpt",
-    "proposed_resume": "remove inherited/configured GIT_CACHE_PATH from process, require historical cache resolver to return none, retain old cache and locks, verbose pinned nohooks sync bounded to 900 seconds"
+    "build": "not run"
   },
   "primary_deps_audit": {
     "report": "/tmp/minethrottle71-work-rwkni3hv/deps-audit-w8n1kuy2/report.json",
@@ -67,5 +63,26 @@
     "cause": "our driver placed --gclientfile before sync; historical dispatcher fell back to general help",
     "correction": "shared argument builder puts sync first for both help and synchronization; confirmed against historical dispatcher",
     "actual_sync": "not run by this attempt"
+  },
+  "dependency_sync_previous_timeout": {
+    "status": "incomplete_timeout",
+    "elapsed_seconds": 3600.21,
+    "underlying_exit_code": -15,
+    "last_reported_task": "src",
+    "diagnostic_directory": "/tmp/minethrottle71-work-rwkni3hv/sync-nohooks-n5r3py1y",
+    "cause": "not yet established; -15 is timeout termination by our wrapper",
+    "hooks": "disabled",
+    "build": "not run",
+    "evidence": "user-supplied terminal result",
+    "cache_diagnostic": "new Chromium mirror staging directory and lock observed under git-cache; previous wrapper enabled GIT_CACHE_PATH; exact waiting subprocess not established from uploaded excerpt",
+    "proposed_resume": "remove inherited/configured GIT_CACHE_PATH from process, require historical cache resolver to return none, retain old cache and locks, verbose pinned nohooks sync bounded to 900 seconds"
+  },
+  "historical_tools": {
+    "gn": "1463 (e134e493)",
+    "clang": "8.0.0 (trunk 344066)",
+    "sysroot_sha1": "e7c53f04bd88d29d075bfd1f62b073aeb69cbe09",
+    "integration_report": "/tmp/minethrottle71-work-rwkni3hv/tools-link-m2r24lb6/result.json",
+    "status": "linked; compilation not validated",
+    "evidence": "user-supplied Grid5000 outputs"
   }
 }
