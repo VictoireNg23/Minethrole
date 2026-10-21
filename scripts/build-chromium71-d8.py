@@ -11,8 +11,8 @@ import tempfile
 import time
 
 
-def command(workspace, output, jobs, target="d8"):
-    return [str(workspace / 'with-tools.sh'), '/usr/bin/ninja', '-C', str(output), '-j', str(jobs), '-k', '1', target]
+def command(workspace, output, jobs, target="d8", sandbox_tests=False):
+    return [str(workspace / 'with-tools.sh'), '/usr/bin/ninja', '-C', str(output), '-j', str(jobs), '-k', '1', target] + (['sandbox_linux_unittests'] if sandbox_tests else [])
 
 
 def main():
@@ -24,7 +24,12 @@ def main():
     parser.add_argument('--timeout', type=int, default=900)
     parser.add_argument('--adaptation-report', type=Path, help='Record and verify the separately applied d8 shutdown adaptation')
     parser.add_argument('--bison-adaptation-report', type=Path, help='Verify and record the separate Blink/Bison wrapper adaptation')
+    parser.add_argument('--clone3-adaptation-report', type=Path)
+    parser.add_argument('--with-sandbox-tests', action='store_true', help='Also build sandbox_linux_unittests; do not execute tests')
+    parser.add_argument('--results-run', type=Path, help='Store build logs and reports in the persistent experiment run')
     args = parser.parse_args()
+    if args.with_sandbox_tests and args.target != 'chrome':
+        raise SystemExit('--with-sandbox-tests requires --target chrome')
     if not 1 <= args.jobs <= 32 or args.timeout < 1:
         raise SystemExit('Require jobs in 1..32 and a positive timeout')
     root = args.workspace.resolve()
@@ -59,14 +64,37 @@ def main():
         if not saved_diff or saved_diff != current_diff:
             raise SystemExit('Bison wrapper differs from recorded adaptation')
         bison_adaptation = {'report': str(args.bison_adaptation_report.resolve()), 'patch_sha256': applied['adaptation_patch_sha256'], 'wrapper_diff_sha256': hashlib.sha256(current_diff.encode()).hexdigest()}
-    logs = Path(tempfile.mkdtemp(prefix=args.target + '-build-', dir=root))
+    clone3_adaptation = None
+    if args.clone3_adaptation_report:
+        applied = json.loads(args.clone3_adaptation_report.read_text())
+        if applied.get('status') != 'clone3_enosys_adaptation_applied_rebuild_required' or applied.get('adaptation_patch_sha256') != 'e34f34c120ebc3dd332bbb5bbdabdeb9a99208b66154241bd4a04cd87dc05f03':
+            raise SystemExit('Expected clone3 ENOSYS adaptation report')
+        files = ['sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc', 'sandbox/linux/seccomp-bpf-helpers/baseline_policy_unittest.cc']
+        current_diff = subprocess.check_output(['git', '-c', 'core.fsmonitor=false', '-C', str(root / 'src'), 'diff', '--'] + files, text=True, timeout=30).strip()
+        saved_diff = (args.clone3_adaptation_report.parent / 'clone3.diff').read_text().strip()
+        if not saved_diff or current_diff != saved_diff:
+            raise SystemExit('Sandbox sources differ from the recorded clone3 adaptation')
+        clone3_adaptation = {'report': str(args.clone3_adaptation_report.resolve()), 'patch_sha256': applied['adaptation_patch_sha256'], 'diff_sha256': hashlib.sha256(current_diff.encode()).hexdigest()}
+    log_parent = root
+    if args.results_run:
+        run = args.results_run.resolve(strict=True)
+        if not (run / 'manifest.json').is_file() or not (run / 'logs').is_dir():
+            raise SystemExit('Expected persistent experiment directory')
+        log_parent = run / 'logs'
+    logs = Path(tempfile.mkdtemp(prefix=args.target + '-build-', dir=log_parent))
     env = dict(os.environ, CCACHE_DIR=str(root / 'ccache-d8'), CCACHE_MAXSIZE='10G', CCACHE_BASEDIR=str(root / 'src'))
-    cmd = command(root, output, args.jobs, args.target)
+    cmd = command(root, output, args.jobs, args.target, args.with_sandbox_tests)
     result = {'status': 'incomplete', 'command': cmd, 'log': str(logs / 'build.log'),
               'target': args.target, 'chrome_compilation': 'requested' if args.target == 'chrome' else 'not run', 'runtime_validation': 'not run',
               'ccache_directory': env['CCACHE_DIR']}
     result['shutdown_adaptation'] = adaptation
     result['bison_adaptation'] = bison_adaptation
+    result['clone3_adaptation'] = clone3_adaptation
+    result['sandbox_tests_requested'] = args.with_sandbox_tests
+    result['native_tests_execution'] = 'not run'
+    for label, report_file in [('shutdown', args.adaptation_report), ('bison', args.bison_adaptation_report), ('clone3', args.clone3_adaptation_report)]:
+        if report_file:
+            (logs / (label + '-application-report.json')).write_bytes(report_file.read_bytes())
     print('Command:', json.dumps(cmd), flush=True)
     print('Log:', logs / 'build.log', flush=True)
     started = time.monotonic()
@@ -101,6 +129,15 @@ def main():
             for chunk in iter(lambda: binary.read(1024 * 1024), b''):
                 digest.update(chunk)
         result['binary_sha256'] = digest.hexdigest()
+    if args.with_sandbox_tests:
+        test_binary = output / 'sandbox_linux_unittests'
+        result['sandbox_test_binary_exists'] = test_binary.is_file()
+        if result['status'] == args.target + '_build_passed' and test_binary.is_file():
+            digest = hashlib.sha256()
+            with test_binary.open('rb') as binary:
+                for chunk in iter(lambda: binary.read(1024 * 1024), b''):
+                    digest.update(chunk)
+            result['sandbox_test_binary_sha256'] = digest.hexdigest()
     (logs / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))
     print('Report:', logs / 'result.json')

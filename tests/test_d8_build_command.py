@@ -19,3 +19,9 @@ class D8BuildCommand(unittest.TestCase):
         root = Path('/tmp/isolated')
         args = m.command(root, root / 'src/out/prepared', 16, 'chrome')
         self.assertEqual(args[-5:], ['-j', '16', '-k', '1', 'chrome'])
+
+    def test_compiles_native_sandbox_tests_without_running_them(self):
+        root = Path('/tmp/isolated')
+        args = m.command(root, root / 'src/out/prepared', 16, 'chrome', True)
+        self.assertEqual(args[-2:], ['chrome', 'sandbox_linux_unittests'])
+        self.assertNotIn('--gtest_filter', ' '.join(args))
