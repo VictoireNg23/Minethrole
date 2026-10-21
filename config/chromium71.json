@@ -152,5 +152,14 @@
     "elapsed_seconds": 15.71,
     "evidence": "user-uploaded terminal log",
     "resolution": "historical Node and WebUI modules now linked; rebuild pending"
+  },
+  "chrome_latest_build": {
+    "status": "failed_missing_gperf",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-hvl6woa8/result.json",
+    "exit_code": 1,
+    "elapsed_seconds": 28.24,
+    "failed_action": "Blink platform:color_data; gperf command not found (127)",
+    "evidence": "user-supplied terminal log",
+    "resolution": "targeted system package installation pending"
   }
 }
