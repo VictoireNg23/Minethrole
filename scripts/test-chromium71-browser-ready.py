@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""Run a benign local no-Wasm page as the dedicated user and observe renderer sandbox."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import pwd
+import resource
+import shutil
+import signal
+import subprocess
+import tempfile
+import time
+
+
+def parse_status(text):
+    return {line.split(':', 1)[0]: line.split(':', 1)[1].strip() for line in text.splitlines() if ':' in line}
+
+
+def descendants(pid):
+    seen, queue = set(), [pid]
+    while queue:
+        current = queue.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        try:
+            queue.extend(int(n) for n in Path('/proc/%d/task/%d/children' % (current, current)).read_text().split())
+        except OSError:
+            pass
+    return seen
+
+
+def observe(pid):
+    try:
+        base = Path('/proc') / str(pid)
+        command = (base / 'cmdline').read_bytes().replace(b'\0', b' ').decode(errors='replace')
+        if '--type=renderer' not in command:
+            return None
+        fields = parse_status((base / 'status').read_text())
+        return {'pid': pid, 'command': command, 'uid': fields.get('Uid'),
+                'seccomp': fields.get('Seccomp'), 'no_new_privs': fields.get('NoNewPrivs'),
+                'user_namespace': os.readlink(base / 'ns/user')}
+    except OSError:
+        return None
+
+
+def limited_core():
+    resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--stage-report', required=True, type=Path)
+    args = parser.parse_args()
+    if os.geteuid() != 0:
+        raise SystemExit('Run the controller as root; Chromium itself is launched as the dedicated user')
+    stage = json.loads(args.stage_report.read_text())
+    if stage.get('status') != 'nonroot_browser_test_staged_not_launched' or stage.get('user') != 'minethrottle-test':
+        raise SystemExit('Expected dedicated browser staging report')
+    account = pwd.getpwnam(stage['user'])
+    if account.pw_uid != stage['uid'] or account.pw_uid == 0:
+        raise SystemExit('Dedicated account identity differs')
+    binary = Path(stage['binary'])
+    digest = hashlib.sha256()
+    with binary.open('rb') as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b''):
+            digest.update(chunk)
+    if digest.hexdigest() != stage['binary_sha256']:
+        raise SystemExit('Browser checksum differs')
+    run = Path(stage['results_run']).resolve(strict=True)
+    saved = Path(tempfile.mkdtemp(prefix='browser-ready-', dir=run / 'raw'))
+    local = Path(tempfile.mkdtemp(prefix='ready-', dir=Path(stage['session_directory'])))
+    for name in ('home', 'profile', 'cache'):
+        path = local / name
+        path.mkdir(mode=0o700)
+        os.chown(path, account.pw_uid, account.pw_gid)
+    fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures/browser-ready.html'
+    page = local / 'browser-ready.html'
+    shutil.copyfile(fixture, page)
+    page.chmod(0o644)
+    os.chown(local, account.pw_uid, account.pw_gid)
+    env = dict(os.environ, HOME=str(local / 'home'), XDG_CONFIG_HOME=str(local / 'home'), XDG_CACHE_HOME=str(local / 'cache'))
+    command = ['/usr/sbin/runuser', '-u', stage['user'], '--', str(binary),
+               '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--no-first-run',
+               '--no-default-browser-check', '--disable-background-networking', '--disable-component-update',
+               '--disable-extensions', '--disable-sync', '--metrics-recording-only',
+               '--user-data-dir=' + str(local / 'profile'), '--dump-dom', page.as_uri()]
+    report = {'status': 'incomplete', 'command': command, 'binary_sha256': digest.hexdigest(),
+              'local_directory': str(local), 'results_directory': str(saved),
+              'wasm_execution': 'not run', 'dataset_execution': 'not run', 'sandbox_disabled_by_command': False}
+    print('Persistent results:', saved, flush=True)
+    samples = {}
+    with (saved / 'stdout.html').open('w+') as stdout, (saved / 'stderr.log').open('w+') as stderr:
+        process = subprocess.Popen(command, cwd=local, env=env, stdout=stdout, stderr=stderr,
+                                   start_new_session=True, preexec_fn=limited_core)
+        timed_out = False
+        started = time.monotonic()
+        try:
+            while process.poll() is None:
+                for pid in descendants(process.pid):
+                    sample = observe(pid)
+                    if sample:
+                        samples[pid] = sample
+                if time.monotonic() - started > 20:
+                    timed_out = True
+                    break
+                time.sleep(0.05)
+        finally:
+            if process.poll() is None:
+                try:
+                    os.killpg(process.pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    os.killpg(process.pid, signal.SIGKILL)
+                    process.wait()
+        stdout.seek(0)
+        output = stdout.read()
+        stderr.seek(0)
+        errors = stderr.read()
+    report.update(exit_code=process.returncode, timeout=timed_out,
+                  page_marker_present='MINETHROTTLE_BROWSER_READY</pre>' in output,
+                  renderer_samples=list(samples.values()), stderr_tail=errors[-5000:])
+    sandbox_observed = any(item['seccomp'] == '2' and item['no_new_privs'] == '1' and
+                           item['uid'] and int(item['uid'].split()[1]) == account.pw_uid and
+                           '--no-sandbox' not in item['command'] for item in samples.values())
+    report['renderer_seccomp_and_nonroot_observed'] = sandbox_observed
+    if not timed_out and process.returncode == 0 and report['page_marker_present'] and sandbox_observed:
+        report['status'] = 'benign_page_nonroot_renderer_sandbox_observed'
+    else:
+        report['status'] = 'browser_ready_failed_or_incomplete'
+    (saved / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
+    print(json.dumps(report, indent=2))
+    print('Report:', saved / 'result.json')
+    return 0 if report['status'] == 'benign_page_nonroot_renderer_sandbox_observed' else 1
+
+
+if __name__ == '__main__':
+    main()
