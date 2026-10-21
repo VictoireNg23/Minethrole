@@ -178,5 +178,11 @@
       "evidence": "user-supplied terminal log",
       "resolution": "targeted system package installation pending"
     }
-  ]
+  ],
+  "bison": {
+    "version": "3.8.2",
+    "system_binary": "verified by user",
+    "historical_build_environment": "verified by user",
+    "generated_parser_compatibility": "not yet tested"
+  }
 }
