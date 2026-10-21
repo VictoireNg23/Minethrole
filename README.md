@@ -1,3 +1,5 @@
+> **Grid5000 :** pour examiner les sources déjà présentes sans les modifier, suivre [le diagnostic complémentaire Chromium 71](docs/diagnostic-grid5000-chromium71.md).
+
 > **Travail en cours : Chromium 71 / C++ / V8.** La piste Rust/Wasmtime est abandonnée. Avant toute installation sur votre PC Ubuntu, consulter [le diagnostic initial](docs/diagnostic-ubuntu-chromium71.md) et exécuter `bash scripts/diagnose-ubuntu.sh` depuis le disque prévu pour la compilation. La procédure sera adaptée après lecture de la sortie. Les instructions originales des auteurs sont conservées ci-dessous ; leur compatibilité avec votre machine reste à vérifier.
 
 # MineThrottle
