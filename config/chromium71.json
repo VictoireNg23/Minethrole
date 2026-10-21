@@ -136,5 +136,21 @@
     "binary_sha256": "47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e",
     "evidence": "user-supplied terminal summary of full report",
     "limits": "synthetic counter tests only; speeds, profiles, defense and Chromium runtime not validated"
+  },
+  "historical_node_webui": {
+    "status": "staged_and_linked",
+    "node_version": "v8.9.1",
+    "bundler_version": "3.1.1",
+    "extensionless_help_exit_code": 0,
+    "report": "/tmp/minethrottle71-node-stage-7rm44qda/node-stage-validation-rh3929o5/result.json",
+    "evidence": "user-uploaded terminal report"
+  },
+  "chrome_first_build": {
+    "status": "failed_missing_node",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-c9hzhsk5/result.json",
+    "exit_code": 1,
+    "elapsed_seconds": 15.71,
+    "evidence": "user-uploaded terminal log",
+    "resolution": "historical Node and WebUI modules now linked; rebuild pending"
   }
 }
