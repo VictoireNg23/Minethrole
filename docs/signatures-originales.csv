@@ -1,0 +1,194 @@
+profile,window,rank,key_decimal,opcodes_hex,v8_names,active_default
+coinhive,1,1,46,73,I32Xor,False
+coinhive,1,2,37,6a,I32Add,False
+coinhive,1,3,47,74,I32Shl,False
+coinhive,1,4,44,71,I32And,False
+coinhive,1,5,49,76,I32ShrU,False
+coinhive,1,6,55,7c,I64Add,False
+coinhive,1,7,64,85,I64Xor,False
+coinhive,1,8,67,88,I64ShrU,False
+coinhive,1,9,65,86,I64Shl,False
+coinhive,1,10,62,83,I64And,False
+coinhive,2,1,5818,74 6a,I32Shl I32Add,False
+coinhive,2,2,4597,6a 73,I32Add I32Xor,False
+coinhive,2,3,5459,71 74,I32And I32Shl,False
+coinhive,2,4,5707,73 76,I32Xor I32ShrU,False
+coinhive,2,5,6071,76 71,I32ShrU I32And,False
+coinhive,2,6,6074,76 74,I32ShrU I32Shl,False
+coinhive,2,7,5702,73 71,I32Xor I32And,False
+coinhive,2,8,5827,74 73,I32Shl I32Xor,False
+coinhive,2,9,6820,7c 7c,I64Add I64Add,False
+coinhive,2,10,5695,73 6a,I32Xor I32Add,False
+coinhive,3,1,715660,74 6a 73,I32Shl I32Add I32Xor,False
+coinhive,3,2,671494,71 74 6a,I32And I32Shl I32Add,False
+coinhive,3,3,565480,6a 73 76,I32Add I32Xor I32ShrU,False
+coinhive,3,4,746780,76 71 74,I32ShrU I32And I32Shl,False
+coinhive,3,5,702005,73 76 71,I32Xor I32ShrU I32And,False
+coinhive,3,6,702008,73 76 74,I32Xor I32ShrU I32Shl,False
+coinhive,3,7,701393,73 71 74,I32Xor I32And I32Shl,False
+coinhive,3,8,747139,76 74 6a,I32ShrU I32Shl I32Add,False
+coinhive,3,9,565475,6a 73 71,I32Add I32Xor I32And,False
+coinhive,3,10,671503,71 74 73,I32And I32Shl I32Xor,False
+coinhive,4,1,82593808,71 74 6a 73,I32And I32Shl I32Add I32Xor,False
+coinhive,4,2,88026229,74 6a 73 76,I32Shl I32Add I32Xor I32ShrU,False
+coinhive,4,3,86346662,73 76 71 74,I32Xor I32ShrU I32And I32Shl,False
+coinhive,4,4,91853977,76 71 74 6a,I32ShrU I32And I32Shl I32Add,False
+coinhive,4,5,69554084,6a 73 76 71,I32Add I32Xor I32ShrU I32And,False
+coinhive,4,6,91898143,76 74 6a 73,I32ShrU I32Shl I32Add I32Xor,False
+coinhive,4,7,69554087,6a 73 76 74,I32Add I32Xor I32ShrU I32Shl,False
+coinhive,4,8,88026224,74 6a 73 71,I32Shl I32Add I32Xor I32And,False
+coinhive,4,9,69553472,6a 73 71 74,I32Add I32Xor I32And I32Shl,False
+coinhive,4,10,86271376,73 71 74 6a,I32Xor I32And I32Shl I32Add,False
+coinhive,5,1,10159038433,71 74 6a 73 76,I32And I32Shl I32Add I32Xor I32ShrU,True
+coinhive,5,2,11298039217,76 71 74 6a 73,I32ShrU I32And I32Shl I32Add I32Xor,True
+coinhive,5,3,10620639463,73 76 71 74 6a,I32Xor I32ShrU I32And I32Shl I32Add,True
+coinhive,5,4,10827226211,74 6a 73 76 71,I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,5,5,8555152379,6a 73 76 71 74,I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,5,6,10827226214,74 6a 73 76 74,I32Shl I32Add I32Xor I32ShrU I32Shl,False
+coinhive,5,7,10827225599,74 6a 73 71 74,I32Shl I32Add I32Xor I32And I32Shl,False
+coinhive,5,8,8555077093,6a 73 71 74 6a,I32Add I32Xor I32And I32Shl I32Add,False
+coinhive,5,9,10611379294,73 71 74 6a 73,I32Xor I32And I32Shl I32Add I32Xor,False
+coinhive,5,10,8555152738,6a 73 76 74 6a,I32Add I32Xor I32ShrU I32Shl I32Add,False
+coinhive,6,1,1331748824000,74 6a 73 76 71 74,I32Shl I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,6,2,1052283742654,6a 73 76 71 74 6a,I32Add I32Xor I32ShrU I32And I32Shl I32Add,False
+coinhive,6,3,1306338653995,73 76 71 74 6a 73,I32Xor I32ShrU I32And I32Shl I32Add I32Xor,False
+coinhive,6,4,1249561727303,71 74 6a 73 76 71,I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,6,5,1389658823740,76 71 74 6a 73 76,I32ShrU I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,6,6,1331748748714,74 6a 73 71 74 6a,I32Shl I32Add I32Xor I32And I32Shl I32Add,False
+coinhive,6,7,1052274482485,6a 73 71 74 6a 73,I32Add I32Xor I32And I32Shl I32Add I32Xor,False
+coinhive,6,8,1331748824359,74 6a 73 76 74 6a,I32Shl I32Add I32Xor I32ShrU I32Shl I32Add,False
+coinhive,6,9,1052283786820,6a 73 76 74 6a 73,I32Add I32Xor I32ShrU I32Shl I32Add I32Xor,False
+coinhive,6,10,1305199653211,73 71 74 6a 73 76,I32Xor I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,7,1,163805105352037,74 6a 73 76 71 74 6a,I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add,False
+coinhive,7,2,129430900346488,6a 73 76 71 74 6a 73,I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor,False
+coinhive,7,3,153696092458316,71 74 6a 73 76 71 74,I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,7,4,160679654441434,73 76 71 74 6a 73 76,I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,7,5,163805096091868,74 6a 73 71 74 6a 73,I32Shl I32Add I32Xor I32And I32Shl I32Add I32Xor,False
+coinhive,7,6,163805105396203,74 6a 73 76 74 6a 73,I32Shl I32Add I32Xor I32ShrU I32Shl I32Add I32Xor,False
+coinhive,7,7,129429761345704,6a 73 71 74 6a 73 76,I32Add I32Xor I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,7,8,160539557344997,73 71 74 6a 73 76 71,I32Xor I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,7,9,170928035320064,76 71 74 6a 73 76 71,I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,7,10,170928035320067,76 71 74 6a 73 76 74,I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32Shl,False
+coinhive,8,1,20148027958300597,74 6a 73 76 71 74 6a 73,I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor,False
+coinhive,8,2,18904619372372905,71 74 6a 73 76 71 74 6a,I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add,False
+coinhive,8,3,15920000742618073,6a 73 76 71 74 6a 73 76,I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,8,4,20148026819299813,74 6a 73 71 74 6a 73 76,I32Shl I32Add I32Xor I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,8,5,15919860645521636,6a 73 71 74 6a 73 76 71,I32Add I32Xor I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,8,6,19746365553434678,73 71 74 6a 73 76 71 74,I32Xor I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,8,7,19763597496296426,73 76 71 74 6a 73 76 71,I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,8,8,21024148344367919,76 71 74 6a 73 76 71 74,I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,8,9,19763597496296429,73 76 71 74 6a 73 76 74,I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32Shl,False
+coinhive,8,10,21024148344368278,76 71 74 6a 73 76 74 6a,I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32Shl I32Add,False
+coinhive,9,1,2325268182801867361,71 74 6a 73 76 71 74 6a 73,I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor,False
+coinhive,9,2,2478207438870973480,74 6a 73 76 71 74 6a 73 76,I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU,False
+coinhive,9,3,2478207298773877043,74 6a 73 71 74 6a 73 76 71,I32Shl I32Add I32Xor I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,9,4,1958142859399161275,6a 73 71 74 6a 73 76 71 74,I32Add I32Xor I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,9,5,2428802963072465431,73 71 74 6a 73 76 71 74 6a,I32Xor I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add,False
+coinhive,9,6,1958160091342023023,6a 73 76 71 74 6a 73 76 71,I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32And,False
+coinhive,9,7,2430922492044460445,73 76 71 74 6a 73 76 71 74,I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl,False
+coinhive,9,8,2585970246357254074,76 71 74 6a 73 76 71 74 6a,I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32And I32Shl I32Add,False
+coinhive,9,9,1958160091342023026,6a 73 76 71 74 6a 73 76 74,I32Add I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32Shl,False
+coinhive,9,10,2430922492044460804,73 76 71 74 6a 73 76 74 6a,I32Xor I32ShrU I32And I32Shl I32Add I32Xor I32ShrU I32Shl I32Add,False
+cryptoloot,1,1,37,6a,I32Add,False
+cryptoloot,1,2,46,73,I32Xor,False
+cryptoloot,1,3,47,74,I32Shl,False
+cryptoloot,1,4,55,7c,I64Add,False
+cryptoloot,1,5,64,85,I64Xor,False
+cryptoloot,1,6,44,71,I32And,False
+cryptoloot,1,7,62,83,I64And,False
+cryptoloot,1,8,67,88,I64ShrU,False
+cryptoloot,1,9,57,7e,I64Mul,False
+cryptoloot,1,10,65,86,I64Shl,False
+cryptoloot,3,1,715660,74 6a 73,I32Shl I32Add I32Xor,False
+cryptoloot,3,2,701752,73 74 6a,I32Xor I32Shl I32Add,False
+cryptoloot,3,3,565478,6a 73 74,I32Add I32Xor I32Shl,False
+cryptoloot,3,4,565591,6a 74 6a,I32Add I32Shl I32Add,False
+cryptoloot,3,5,565477,6a 73 73,I32Add I32Xor I32Xor,False
+cryptoloot,3,6,715661,74 6a 74,I32Shl I32Add I32Shl,False
+cryptoloot,3,7,701629,73 73 6a,I32Xor I32Xor I32Add,False
+cryptoloot,3,8,700532,73 6a 74,I32Xor I32Add I32Shl,False
+cryptoloot,3,9,838915,7c 7c 7c,I64Add I64Add I64Add,False
+cryptoloot,3,10,715658,74 6a 71,I32Shl I32Add I32And,False
+cryptoloot,5,1,10827225958,74 6a 73 74 6a,I32Shl I32Add I32Xor I32Shl I32Add,True
+cryptoloot,5,2,8555121259,6a 73 74 6a 73,I32Add I32Xor I32Shl I32Add I32Xor,True
+cryptoloot,5,3,10616811713,73 74 6a 73 74,I32Xor I32Shl I32Add I32Xor I32Shl,True
+cryptoloot,5,4,10616811712,73 74 6a 73 73,I32Xor I32Shl I32Add I32Xor I32Xor,False
+cryptoloot,5,5,10827239866,74 6a 74 6a 73,I32Shl I32Add I32Shl I32Add I32Xor,False
+cryptoloot,5,6,8556831944,6a 74 6a 73 74,I32Add I32Shl I32Add I32Xor I32Shl,False
+cryptoloot,5,7,10827225835,74 6a 73 73 6a,I32Shl I32Add I32Xor I32Xor I32Add,False
+cryptoloot,5,8,8555106131,6a 73 73 6a 74,I32Add I32Xor I32Xor I32Add I32Shl,False
+cryptoloot,5,9,10614950959,73 73 6a 74 6a,I32Xor I32Xor I32Add I32Shl I32Add,False
+cryptoloot,5,10,8556832057,6a 74 6a 74 6a,I32Add I32Shl I32Add I32Shl I32Add,False
+cryptoloot,7,1,163805101524287,74 6a 73 74 6a 73 74,I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Shl,False
+cryptoloot,7,2,129430429533229,6a 73 74 6a 73 74 6a,I32Add I32Xor I32Shl I32Add I32Xor I32Shl I32Add,False
+cryptoloot,7,3,160621744410574,73 74 6a 73 74 6a 73,I32Xor I32Shl I32Add I32Xor I32Shl I32Add I32Xor,False
+cryptoloot,7,4,163805101524286,74 6a 73 74 6a 73 73,I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Xor,False
+cryptoloot,7,5,163805311938532,74 6a 74 6a 73 74 6a,I32Shl I32Add I32Shl I32Add I32Xor I32Shl I32Add,False
+cryptoloot,7,6,129456310485373,6a 74 6a 73 74 6a 73,I32Add I32Shl I32Add I32Xor I32Shl I32Add I32Xor,False
+cryptoloot,7,7,129430429533106,6a 73 74 6a 73 73 6a,I32Add I32Xor I32Shl I32Add I32Xor I32Xor I32Add,False
+cryptoloot,7,8,160621744395446,73 74 6a 73 73 6a 74,I32Xor I32Shl I32Add I32Xor I32Xor I32Add I32Shl,False
+cryptoloot,7,9,163805099663533,74 6a 73 73 6a 74 6a,I32Shl I32Add I32Xor I32Xor I32Add I32Shl I32Add,False
+cryptoloot,7,10,129456312196058,6a 74 6a 74 6a 73 74,I32Add I32Shl I32Add I32Shl I32Add I32Xor I32Shl,False
+cryptoloot,9,1,2478207380960942620,74 6a 73 74 6a 73 74 6a 73,I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Shl I32Add I32Xor,False
+cryptoloot,9,2,1958152968408227245,6a 73 74 6a 73 74 6a 73 73,I32Add I32Xor I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Xor,False
+cryptoloot,9,3,2478210564318056333,74 6a 74 6a 73 74 6a 73 74,I32Shl I32Add I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Shl,False
+cryptoloot,9,4,1958544521333213935,6a 74 6a 73 74 6a 73 74 6a,I32Add I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Shl I32Add,False
+cryptoloot,9,5,2430046371187579741,73 74 6a 73 74 6a 73 73 6a,I32Xor I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Xor I32Add,False
+cryptoloot,9,6,2478207380960927492,74 6a 73 74 6a 73 73 6a 74,I32Shl I32Add I32Xor I32Shl I32Add I32Xor I32Xor I32Add I32Shl,False
+cryptoloot,9,7,1958152968406366492,6a 73 74 6a 73 73 6a 74 6a,I32Add I32Xor I32Shl I32Add I32Xor I32Xor I32Add I32Shl I32Add,False
+cryptoloot,9,8,2430046370958707132,73 74 6a 73 73 6a 74 6a 74,I32Xor I32Shl I32Add I32Xor I32Xor I32Add I32Shl I32Add I32Shl,False
+cryptoloot,9,9,2478207352809596575,74 6a 73 73 6a 74 6a 74 6a,I32Shl I32Add I32Xor I32Xor I32Add I32Shl I32Add I32Shl I32Add,False
+cryptoloot,9,10,1958149505792663710,6a 73 73 6a 74 6a 74 6a 73,I32Add I32Xor I32Xor I32Add I32Shl I32Add I32Shl I32Add I32Xor,False
+unknown_algorithm_1,1,1,37,6a,I32Add,False
+unknown_algorithm_1,1,2,46,73,I32Xor,False
+unknown_algorithm_1,1,3,47,74,I32Shl,False
+unknown_algorithm_1,1,4,44,71,I32And,False
+unknown_algorithm_1,1,5,55,7c,I64Add,False
+unknown_algorithm_1,1,6,64,85,I64Xor,False
+unknown_algorithm_1,1,7,67,88,I64ShrU,False
+unknown_algorithm_1,1,8,104,ad,I64UConvertI32,False
+unknown_algorithm_1,1,9,65,86,I64Shl,False
+unknown_algorithm_1,1,10,57,7e,I64Mul,False
+unknown_algorithm_1,3,1,701638,73 73 73,I32Xor I32Xor I32Xor,False
+unknown_algorithm_1,3,2,565591,6a 74 6a,I32Add I32Shl I32Add,False
+unknown_algorithm_1,3,3,715661,74 6a 74,I32Shl I32Add I32Shl,False
+unknown_algorithm_1,3,4,671494,71 74 6a,I32And I32Shl I32Add,False
+unknown_algorithm_1,3,5,715658,74 6a 71,I32Shl I32Add I32And,False
+unknown_algorithm_1,3,6,565232,6a 71 74,I32Add I32And I32Shl,False
+unknown_algorithm_1,3,7,715660,74 6a 73,I32Shl I32Add I32Xor,False
+unknown_algorithm_1,3,8,565477,6a 73 73,I32Add I32Xor I32Xor,False
+unknown_algorithm_1,3,9,701752,73 74 6a,I32Xor I32Shl I32Add,False
+unknown_algorithm_1,3,10,701639,73 73 74,I32Xor I32Xor I32Shl,False
+unknown_algorithm_1,5,1,10827195700,74 6a 71 74 6a,I32Shl I32Add I32And I32Shl I32Add,True
+unknown_algorithm_1,5,2,10827225844,74 6a 73 73 73,I32Shl I32Add I32Xor I32Xor I32Xor,True
+unknown_algorithm_1,5,3,8555107237,6a 73 73 73 73,I32Add I32Xor I32Xor I32Xor I32Xor,True
+unknown_algorithm_1,5,4,8556832057,6a 74 6a 74 6a,I32Add I32Shl I32Add I32Shl I32Add,False
+unknown_algorithm_1,5,5,10615087120,73 73 73 74 6a,I32Xor I32Xor I32Xor I32Shl I32Add,False
+unknown_algorithm_1,5,6,10615087007,73 73 73 73 74,I32Xor I32Xor I32Xor I32Xor I32Shl,False
+unknown_algorithm_1,5,7,10827239867,74 6a 74 6a 74,I32Shl I32Add I32Shl I32Add I32Shl,False
+unknown_algorithm_1,5,8,10159038185,71 74 6a 71 74,I32And I32Shl I32Add I32And I32Shl,False
+unknown_algorithm_1,5,9,8551399523,6a 71 74 6a 71,I32Add I32And I32Shl I32Add I32And,False
+unknown_algorithm_1,5,10,10616811826,73 74 6a 74 6a,I32Xor I32Shl I32Add I32Shl I32Add,False
+unknown_algorithm_1,7,1,163805099799581,74 6a 73 73 73 73 74,I32Shl I32Add I32Xor I32Xor I32Xor I32Xor I32Shl,False
+unknown_algorithm_1,7,2,129430217394391,6a 73 73 73 73 74 6a,I32Add I32Xor I32Xor I32Xor I32Xor I32Shl I32Add,False
+unknown_algorithm_1,7,3,129374123389285,6a 71 74 6a 71 74 6a,I32Add I32And I32Shl I32Add I32And I32Shl I32Add,False
+unknown_algorithm_1,7,4,163804643750759,74 6a 71 74 6a 71 74,I32Shl I32Add I32And I32Shl I32Add I32And I32Shl,False
+unknown_algorithm_1,7,5,163805311938418,74 6a 74 6a 73 73 73,I32Shl I32Add I32Shl I32Add I32Xor I32Xor I32Xor,False
+unknown_algorithm_1,7,6,160595653044298,73 73 73 74 6a 74 6a,I32Xor I32Xor I32Xor I32Shl I32Add I32Shl I32Add,False
+unknown_algorithm_1,7,7,160595651333501,73 73 73 73 74 6a 74,I32Xor I32Xor I32Xor I32Xor I32Shl I32Add I32Shl,False
+unknown_algorithm_1,7,8,129456310471351,6a 74 6a 73 73 73 73,I32Add I32Shl I32Add I32Xor I32Xor I32Xor I32Xor,False
+unknown_algorithm_1,7,9,163805311908274,74 6a 74 6a 71 74 6a,I32Shl I32Add I32Shl I32Add I32And I32Shl I32Add,False
+unknown_algorithm_1,7,10,153696088705462,71 74 6a 71 74 6a 73,I32And I32Shl I32Add I32And I32Shl I32Add I32Xor,False
+unknown_algorithm_1,9,1,1958149758959747257,6a 73 73 73 73 74 6a 74 6a,I32Add I32Xor I32Xor I32Xor I32Xor I32Shl I32Add I32Shl I32Add,False
+unknown_algorithm_1,9,2,2478207354867865547,74 6a 73 73 73 73 74 6a 74,I32Shl I32Add I32Xor I32Xor I32Xor I32Xor I32Shl I32Add I32Shl,False
+unknown_algorithm_1,9,3,2478200455305237508,74 6a 71 74 6a 71 74 6a 73,I32Shl I32Add I32And I32Shl I32Add I32And I32Shl I32Add I32Xor,False
+unknown_algorithm_1,9,4,1957301112756498469,6a 71 74 6a 71 74 6a 73 73,I32Add I32And I32Shl I32Add I32And I32Shl I32Add I32Xor I32Xor,False
+unknown_algorithm_1,9,5,2325268126024940302,71 74 6a 71 74 6a 73 73 73,I32And I32Shl I32Add I32And I32Shl I32Add I32Xor I32Xor I32Xor,False
+unknown_algorithm_1,9,6,2478200455308945220,74 6a 71 74 6a 73 73 73 73,I32Shl I32Add I32And I32Shl I32Add I32Xor I32Xor I32Xor I32Xor,False
+unknown_algorithm_1,9,7,2429651609024541224,73 73 73 73 74 6a 74 6a 71,I32Xor I32Xor I32Xor I32Xor I32Shl I32Add I32Shl I32Add I32And,False
+unknown_algorithm_1,9,8,2478210564316331627,74 6a 74 6a 73 73 73 73 74,I32Shl I32Add I32Shl I32Add I32Xor I32Xor I32Xor I32Xor I32Shl,False
+unknown_algorithm_1,9,9,2429651634907189901,73 73 73 74 6a 74 6a 71 74,I32Xor I32Xor I32Xor I32Shl I32Add I32Shl I32Add I32And I32Shl,False
+unknown_algorithm_1,9,10,2429654818472977162,73 73 74 6a 74 6a 71 74 6a,I32Xor I32Xor I32Shl I32Add I32Shl I32Add I32And I32Shl I32Add,False
+unknown_algorithm_2,5,1,8560659694,6a 76 71 74 6a,I32Add I32ShrU I32And I32Shl I32Add,True
+unknown_algorithm_2,5,2,10827270986,74 6a 76 71 74,I32Shl I32Add I32ShrU I32And I32Shl,True
+unknown_algorithm_2,5,3,11298039220,76 71 74 6a 76,I32ShrU I32And I32Shl I32Add I32ShrU,True
