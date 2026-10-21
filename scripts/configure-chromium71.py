@@ -9,6 +9,12 @@ import tempfile
 BUILD_ARGS = 'cc_wrapper="ccache" use_jumbo_build=true is_debug=false enable_nacl=false'
 
 
+def gn_command(workspace, output):
+    src = workspace / "src"
+    return [str(workspace / "with-tools.sh"), str(src / "buildtools/linux64/gn"),
+            "gen", str(output), "--root=" + str(src), "--args=" + BUILD_ARGS]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('workspace', type=Path)
@@ -27,8 +33,9 @@ def main():
     out.mkdir(exist_ok=True)
     output = Path(tempfile.mkdtemp(prefix='MineThrottle71-config-', dir=out))
     logs = Path(tempfile.mkdtemp(prefix='gn-config-', dir=workspace))
-    command = [str(workspace / 'with-tools.sh'), str(src / 'buildtools/linux64/gn'),
-               'gen', str(output), '--args=' + BUILD_ARGS]
+    if not (src / '.gn').is_file():
+        raise SystemExit('Missing src/.gn; inspect source checkout before configuring')
+    command = gn_command(workspace, output)
     result = {'status': 'incomplete', 'command': command, 'output_directory': str(output),
               'log': str(logs / 'gn.log'), 'patches': 'not applied by this script',
               'compilation': 'not run', 'purpose': 'unpatched build configuration readiness check'}
