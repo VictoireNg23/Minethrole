@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile patched V8/d8 only, with bounded parallelism and retained logs."""
+"""Compile patched d8 or Chromium, with bounded parallelism and retained logs."""
 import argparse
 import hashlib
 import json
@@ -11,14 +11,15 @@ import tempfile
 import time
 
 
-def command(workspace, output, jobs):
-    return [str(workspace / 'with-tools.sh'), '/usr/bin/ninja', '-C', str(output), '-j', str(jobs), '-k', '1', 'd8']
+def command(workspace, output, jobs, target="d8"):
+    return [str(workspace / 'with-tools.sh'), '/usr/bin/ninja', '-C', str(output), '-j', str(jobs), '-k', '1', target]
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('workspace', type=Path)
     parser.add_argument('gn_report', type=Path)
+    parser.add_argument('--target', choices=('d8', 'chrome'), default='d8')
     parser.add_argument('--jobs', type=int, default=8)
     parser.add_argument('--timeout', type=int, default=900)
     parser.add_argument('--adaptation-report', type=Path, help='Record and verify the separately applied d8 shutdown adaptation')
@@ -47,11 +48,11 @@ def main():
         adaptation = {'report': str(args.adaptation_report.resolve()),
                       'patch_sha256': applied['adaptation_patch_sha256'],
                       'd8_diff_sha256': hashlib.sha256(current_diff.encode()).hexdigest()}
-    logs = Path(tempfile.mkdtemp(prefix='d8-build-', dir=root))
+    logs = Path(tempfile.mkdtemp(prefix=args.target + '-build-', dir=root))
     env = dict(os.environ, CCACHE_DIR=str(root / 'ccache-d8'), CCACHE_MAXSIZE='10G', CCACHE_BASEDIR=str(root / 'src'))
-    cmd = command(root, output, args.jobs)
+    cmd = command(root, output, args.jobs, args.target)
     result = {'status': 'incomplete', 'command': cmd, 'log': str(logs / 'build.log'),
-              'target': 'd8', 'chrome_compilation': 'not run', 'runtime_validation': 'not run',
+              'target': args.target, 'chrome_compilation': 'requested' if args.target == 'chrome' else 'not run', 'runtime_validation': 'not run',
               'ccache_directory': env['CCACHE_DIR']}
     result['shutdown_adaptation'] = adaptation
     print('Command:', json.dumps(cmd), flush=True)
@@ -62,9 +63,9 @@ def main():
         try:
             process = subprocess.Popen(cmd, cwd=root / 'src', env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             result['exit_code'] = process.wait(timeout=args.timeout)
-            result['status'] = 'd8_build_passed' if process.returncode == 0 else 'd8_build_failed'
+            result['status'] = args.target + ('_build_passed' if process.returncode == 0 else '_build_failed')
         except (subprocess.TimeoutExpired, KeyboardInterrupt):
-            result['status'] = 'd8_build_timeout_or_interrupted'
+            result['status'] = args.target + '_build_timeout_or_interrupted'
             if process is not None:
                 try:
                     os.killpg(process.pid, signal.SIGTERM)
@@ -81,17 +82,17 @@ def main():
         result['elapsed_seconds'] = round(time.monotonic() - started, 2)
         log.seek(0)
         print(log.read()[-24000:], flush=True)
-    result['binary_exists'] = (output / 'd8').is_file()
-    if result['status'] == 'd8_build_passed' and result['binary_exists']:
+    result['binary_exists'] = (output / args.target).is_file()
+    if result['status'] == args.target + '_build_passed' and result['binary_exists']:
         digest = hashlib.sha256()
-        with (output / 'd8').open('rb') as binary:
+        with (output / args.target).open('rb') as binary:
             for chunk in iter(lambda: binary.read(1024 * 1024), b''):
                 digest.update(chunk)
         result['binary_sha256'] = digest.hexdigest()
     (logs / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))
     print('Report:', logs / 'result.json')
-    return 0 if result['status'] == 'd8_build_passed' else 1
+    return 0 if result['status'] == args.target + '_build_passed' else 1
 
 
 if __name__ == '__main__':

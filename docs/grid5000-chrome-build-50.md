@@ -1,0 +1,9 @@
+# Douze signatures validées ; première compilation Chromium complet
+
+L'utilisateur confirme que `counter-smoke-14r8jq_w/result.json` contient 72 cas, tous `passed`, statut global `counter_smoke_passed`. Ces cas couvrent les douze signatures actives d'origine, avec trois répétitions actives et trois dormantes par signature. Le binaire identifié est `47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e`, construit avec l'adaptation séparée d'arrêt de d8. Cette étape valide les compteurs sur ces fixtures, pas la classification, les profils ou la défense.
+
+Prochaine étape : compiler la cible `chrome` afin de vérifier notamment `content.patch`. Le wrapper de build historique existant accepte maintenant `--target chrome` (le défaut reste d8 pour compatibilité). Il réutilise le répertoire GN patché, conserve les mêmes arguments des auteurs, les objets déjà construits et le cache dédié. Première tentative : 16 tâches, arrêt après une erreur, délai 900 secondes. Aucun nettoyage ni modification automatique du code.
+
+Le nom `build-chromium71-d8.py` est conservé pour les commandes déjà publiées ; le rapport donne explicitement la cible, le statut et l'empreinte du binaire concerné après succès. Une interruption conserve les objets pour une reprise après analyse. La compilation complète peut exiger des fichiers générés, Node ou d'autres dépendances non sollicités par d8 : traiter les erreurs observées avant de poursuivre.
+
+L'adaptation d'arrêt actuelle est propre au shell d8, pas au navigateur. Un succès de compilation chrome ne validera donc ni l'arrêt de ses renderers, ni les effets de SIGALRM sur leur cycle de vie. Aucun navigateur ni module du dataset ne sera lancé par ce script. Les validations des vitesses, profils, seuils et environnements du dataset restent à réaliser.

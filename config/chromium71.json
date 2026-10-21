@@ -125,5 +125,16 @@
     "binary_sha256": "47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e",
     "scope": "three repeats each of dormant, negative and active signature 0; no full lifecycle guarantee",
     "evidence": "user-supplied report excerpt and full-report summary"
+  },
+  "all_active_signature_counters": {
+    "status": "counter_smoke_passed",
+    "cases": 72,
+    "passed": 72,
+    "signatures": 12,
+    "repeats_per_active_and_dormant_case": 3,
+    "report": "/tmp/minethrottle71-work-rwkni3hv/counter-smoke-14r8jq_w/result.json",
+    "binary_sha256": "47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e",
+    "evidence": "user-supplied terminal summary of full report",
+    "limits": "synthetic counter tests only; speeds, profiles, defense and Chromium runtime not validated"
   }
 }

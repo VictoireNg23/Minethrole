@@ -14,3 +14,8 @@ class D8BuildCommand(unittest.TestCase):
         self.assertEqual(args[1], '/usr/bin/ninja')
         self.assertEqual(args[-5:], ['-j', '8', '-k', '1', 'd8'])
         self.assertNotIn('chrome', args)
+
+    def test_chrome_target_is_explicit_and_preserves_limits(self):
+        root = Path('/tmp/isolated')
+        args = m.command(root, root / 'src/out/prepared', 16, 'chrome')
+        self.assertEqual(args[-5:], ['-j', '16', '-k', '1', 'chrome'])
