@@ -5,7 +5,7 @@
   "v8_version": "7.1.302.31",
   "evidence": "User-supplied Grid5000 diagnostic output: Chromium tag resolution, V8 revision extracted from historical DEPS, and historical V8 version header. The patch-check script rechecks the DEPS mapping before extraction.",
   "historical_context_check": "passed on Grid5000, user-supplied terminal output: v8 and content; originals not applied",
-  "compilation": "V8/d8 passed on Grid5000; full Chromium not compiled",
+  "compilation": "V8/d8 and full Chromium passed on Grid5000, with separate documented d8 shutdown and Blink/Bison adaptations",
   "runtime_validation": "not performed",
   "historical_context_check_export": "/tmp/minethrottle71-patchcheck-sf53k34i",
   "initial_checkouts": "passed on Grid5000: /tmp/minethrottle71-work-rwkni3hv; Chromium/V8 exact HEADs and original patch contexts verified",
@@ -154,12 +154,13 @@
     "resolution": "historical Node and WebUI modules now linked; rebuild pending"
   },
   "chrome_latest_build": {
-    "status": "failed_missing_gpu_version_header",
-    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-dba9j6al/result.json",
-    "elapsed_seconds": 661.68,
-    "exit_code": 1,
-    "evidence": "user-supplied terminal log",
-    "resolution": "targeted original version header generators pending"
+    "status": "chrome_build_passed",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-nu3mbx0n/result.json",
+    "elapsed_seconds": 50.22,
+    "exit_code": 0,
+    "binary_sha256": "bd6dcd7be07e09553d1d1eb75d2ea7a2719c828b115c93a2735762b460ec0d22",
+    "evidence": "user-supplied terminal JSON",
+    "runtime_validation": "not run"
   },
   "gperf": {
     "version": "3.1",
@@ -185,6 +186,14 @@
       "failed_action": "Blink make_core_generated_bison; launching bison raises ENOENT",
       "evidence": "user-uploaded terminal log",
       "resolution": "targeted bison installation pending"
+    },
+    {
+      "status": "failed_missing_gpu_version_header",
+      "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-dba9j6al/result.json",
+      "elapsed_seconds": 661.68,
+      "exit_code": 1,
+      "evidence": "user-supplied terminal log",
+      "resolution": "targeted original version header generators pending"
     }
   ],
   "bison": {
