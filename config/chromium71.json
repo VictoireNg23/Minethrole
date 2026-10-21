@@ -4,7 +4,8 @@
   "v8_revision": "b5a5d900a5385d6429edefb11ece72bfa649ca47",
   "v8_version": "7.1.302.31",
   "evidence": "User-supplied Grid5000 diagnostic output: Chromium tag resolution, V8 revision extracted from historical DEPS, and historical V8 version header. The patch-check script rechecks the DEPS mapping before extraction.",
-  "historical_context_check": "pending user execution on Grid5000",
+  "historical_context_check": "passed on Grid5000, user-supplied terminal output: v8 and content; originals not applied",
   "compilation": "not performed",
-  "runtime_validation": "not performed"
+  "runtime_validation": "not performed",
+  "historical_context_check_export": "/tmp/minethrottle71-patchcheck-sf53k34i"
 }
