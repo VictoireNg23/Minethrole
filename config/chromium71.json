@@ -7,5 +7,9 @@
   "historical_context_check": "passed on Grid5000, user-supplied terminal output: v8 and content; originals not applied",
   "compilation": "not performed",
   "runtime_validation": "not performed",
-  "historical_context_check_export": "/tmp/minethrottle71-patchcheck-sf53k34i"
+  "historical_context_check_export": "/tmp/minethrottle71-patchcheck-sf53k34i",
+  "initial_checkouts": "passed on Grid5000: /tmp/minethrottle71-work-rwkni3hv; Chromium/V8 exact HEADs and original patch contexts verified",
+  "workspace": "/tmp/minethrottle71-work-rwkni3hv",
+  "object_storage": "shared local clones borrowing original chromium/src and chromium/src/v8 object stores; retain originals",
+  "dependency_sync": "not run"
 }
