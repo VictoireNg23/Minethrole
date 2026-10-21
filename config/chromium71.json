@@ -222,5 +222,18 @@
     "evidence": "user-supplied terminal JSON",
     "browser_page": "not opened",
     "wasm_browser_runtime": "not validated"
+  },
+  "native_bpf_tests": {
+    "status": "three_native_bpf_tests_passed",
+    "tests": [
+      "BaselinePolicy.Clone3ReturnsEnosys",
+      "BaselinePolicy.CreateThread",
+      "BaselinePolicy.DisallowedCloneFlagCrashes"
+    ],
+    "binary_sha256": "c7d8497e41eb6a4bf6d963592796dd5fc0b8fbcc7c0d9dcd9d9b70fd7c2bec04",
+    "glibc_tunables": "glibc.pthread.rseq=0",
+    "report_suffix": "raw/sandbox-native-wyp15v5i/result.json",
+    "evidence": "user-supplied full terminal JSON",
+    "browser_page": "not yet retested"
   }
 }

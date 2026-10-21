@@ -37,3 +37,9 @@ class ProcStatus(unittest.TestCase):
         self.assertIn('p $_siginfo', args)
         self.assertIn('info registers orig_rax rax rip', args)
         self.assertLess(args.index('p $_siginfo'), args.index('detach'))
+
+    def test_browser_rseq_opt_out_is_local_and_idempotent(self):
+        original = 'glibc.malloc.arena_max=2:glibc.pthread.rseq=1'
+        value = m.disable_rseq_tunable(original)
+        self.assertEqual(value, 'glibc.malloc.arena_max=2:glibc.pthread.rseq=0')
+        self.assertEqual(m.disable_rseq_tunable(value), value)

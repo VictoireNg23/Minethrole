@@ -84,6 +84,11 @@ def debugger_command(pid, role, resume_startup=False):
                       '-ex', 'thread apply all bt 15', '-ex', 'detach']
 
 
+def disable_rseq_tunable(existing):
+    entries = [entry for entry in existing.split(':') if entry and entry.split('=', 1)[0] != 'glibc.pthread.rseq']
+    return ':'.join(entries + ['glibc.pthread.rseq=0'])
+
+
 def limited_core():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
@@ -94,6 +99,8 @@ def main():
     parser.add_argument('--diagnostic-cdp', action='store_true', help='Observe localhost DevTools targets; intentional stop, no passing verdict')
     parser.add_argument('--diagnostic-gdb', action='store_true', help='Capture live browser/renderer stacks during the CDP diagnostic')
     parser.add_argument('--diagnostic-renderer-startup', action='store_true', help='Pause renderer using Chromium startup switch, attach GDB then unpause with SIGUSR1')
+    parser.add_argument('--disable-glibc-rseq', action='store_true')
+    parser.add_argument('--native-test-report', type=Path, help='Successful BPF tests for this staging and runtime configuration')
     args = parser.parse_args()
     if args.diagnostic_renderer_startup and not args.diagnostic_gdb:
         raise SystemExit('--diagnostic-renderer-startup requires --diagnostic-gdb')
@@ -104,6 +111,14 @@ def main():
     stage = json.loads(args.stage_report.read_text())
     if stage.get('status') != 'nonroot_browser_test_staged_not_launched' or stage.get('user') != 'minethrottle-test':
         raise SystemExit('Expected dedicated browser staging report')
+    if stage.get('clone3_adaptation'):
+        if not args.native_test_report:
+            raise SystemExit('Successful native BPF test report required for clone3-adapted browser')
+        native = json.loads(args.native_test_report.read_text())
+        if native.get('status') != 'three_native_bpf_tests_passed' or native.get('test_binary_sha256') != stage.get('sandbox_test_binary_sha256') or Path(native['stage_report']).resolve() != args.stage_report.resolve():
+            raise SystemExit('Native BPF report does not match this staging')
+        if bool(native.get('rseq_disabled_by_controller')) != args.disable_glibc_rseq:
+            raise SystemExit('Browser rseq setting must match successful native BPF tests')
     account = pwd.getpwnam(stage['user'])
     if account.pw_uid != stage['uid'] or account.pw_uid == 0:
         raise SystemExit('Dedicated account identity differs')
@@ -127,6 +142,8 @@ def main():
     page.chmod(0o644)
     os.chown(local, account.pw_uid, account.pw_gid)
     env = dict(os.environ, HOME=str(local / 'home'), XDG_CONFIG_HOME=str(local / 'home'), XDG_CACHE_HOME=str(local / 'cache'))
+    if args.disable_glibc_rseq:
+        env['GLIBC_TUNABLES'] = disable_rseq_tunable(env.get('GLIBC_TUNABLES', ''))
     command = ['/usr/sbin/runuser', '-u', stage['user'], '--', str(binary),
                '--headless', '--disable-gpu', '--disable-dev-shm-usage', '--no-first-run',
                '--no-default-browser-check', '--disable-background-networking', '--disable-component-update',
@@ -140,6 +157,8 @@ def main():
     report = {'status': 'incomplete', 'command': command, 'binary_sha256': digest.hexdigest(),
               'local_directory': str(local), 'results_directory': str(saved),
               'wasm_execution': 'not run', 'dataset_execution': 'not run', 'sandbox_disabled_by_command': False}
+    report.update(glibc_tunables=env.get('GLIBC_TUNABLES'), rseq_disabled_by_controller=args.disable_glibc_rseq,
+                  stage_report=str(args.stage_report.resolve()), native_test_report=str(args.native_test_report.resolve()) if args.native_test_report else None)
     print('Persistent results:', saved, flush=True)
     samples = {}
     target_snapshots = []
