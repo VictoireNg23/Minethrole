@@ -18,6 +18,7 @@ def main():
     parser.add_argument('workspace', type=Path)
     parser.add_argument('build_report', type=Path)
     parser.add_argument('fixture', type=Path)
+    parser.add_argument('--gdb-only', action='store_true', help='Skip repeated direct runs and collect only GDB diagnostics')
     args = parser.parse_args()
     workspace = args.workspace.resolve()
     build = json.loads(args.build_report.read_text())
@@ -32,7 +33,7 @@ def main():
     root = Path(tempfile.mkdtemp(prefix='d8-shutdown-diagnostic-', dir=workspace))
     print('Diagnostic directory:', root, flush=True)
     result = {'cases': [], 'gdb': shutil.which('gdb'), 'patch_changes': 'none', 'defense_validation': 'not performed'}
-    for mode in ('dormant', 'negative', 'active'):
+    for mode in (() if args.gdb_only else ('dormant', 'negative', 'active')):
         for repeat in range(3):
             cwd = root / ('%s-%d' % (mode, repeat))
             cwd.mkdir()
@@ -56,7 +57,7 @@ def main():
         gdb_command = [result['gdb'], '-nx', '-nh', '--batch',
                        '-ex', 'set pagination off', '-ex', 'set confirm off',
                        '-ex', 'handle SIGALRM nostop noprint pass',
-                       '-ex', 'run', '-ex', 'thread apply all bt', '-ex', 'info proc mappings',
+                       '-ex', 'run', '-ex', 'thread apply all bt 25', '-ex', 'info symbol $pc', '-ex', 'x/i $pc',
                        '--args', str(binary), str(fixture), '--', 'dormant']
         try:
             process = subprocess.run(gdb_command, cwd=cwd, stdout=subprocess.PIPE,
