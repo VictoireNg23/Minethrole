@@ -1,0 +1,19 @@
+--- a/third_party/blink/renderer/build/scripts/rule_bison.py
++++ b/third_party/blink/renderer/build/scripts/rule_bison.py
+@@ -105,6 +105,16 @@
+ # Rewrite the generated header with #include guards.
+ outputH = os.path.join(outputDir, inputRoot + '.h')
+ 
++# Newer Bison includes its temporary .hh/.hpp header in the generated .cc.
++# Keep that include consistent with the .h name exported by this wrapper.
++with open(outputCpp) as generatedCppFile:
++    generatedCpp = generatedCppFile.read()
++temporaryInclude = '#include "%s"' % os.path.basename(outputHTmp)
++finalInclude = '#include "%s"' % os.path.basename(outputH)
++if temporaryInclude in generatedCpp:
++    with open(outputCpp, 'w') as generatedCppFile:
++        generatedCppFile.write(generatedCpp.replace(temporaryInclude, finalInclude))
++
+ outputHFile = open(outputH, 'w')
+ print >>outputHFile, '#ifndef %sH' % inputRoot
+ print >>outputHFile, '#define %sH' % inputRoot
