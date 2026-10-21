@@ -21,5 +21,15 @@
     "unresolved_definitions": 0,
     "platform_conditions": "not evaluated",
     "evidence": "user-supplied audit summary"
+  },
+  "unconditional_local_seed": {
+    "report": "/tmp/minethrottle71-work-rwkni3hv/deps-seed-3ch80q_x/result.json",
+    "local_clones_prepared": 42,
+    "existing_exact_checkout_untouched": 1,
+    "no_confirmed_local_commit": 20,
+    "condition_deferred": 157,
+    "unsupported_path": 1,
+    "not_a_pinned_git_dependency": 1,
+    "evidence": "user-supplied final summary"
   }
 }
