@@ -75,6 +75,14 @@ def select_debug_targets(commands, binary):
     return [(selected[role], role) for role in ('browser', 'renderer') if role in selected]
 
 
+def debugger_command(pid, role, resume_startup=False):
+    command = [shutil.which('gdb'), '-nx', '-nh', '--batch', '-p', str(pid), '-ex', 'set pagination off']
+    if resume_startup and role == 'renderer':
+        # Chromium 71's startup dialog explicitly installs a SIGUSR1 unpause handler.
+        command += ['-ex', 'handle SIGUSR1 nostop noprint pass', '-ex', 'signal SIGUSR1']
+    return command + ['-ex', 'thread apply all bt 15', '-ex', 'detach']
+
+
 def limited_core():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
@@ -84,7 +92,10 @@ def main():
     parser.add_argument('--stage-report', required=True, type=Path)
     parser.add_argument('--diagnostic-cdp', action='store_true', help='Observe localhost DevTools targets; intentional stop, no passing verdict')
     parser.add_argument('--diagnostic-gdb', action='store_true', help='Capture live browser/renderer stacks during the CDP diagnostic')
+    parser.add_argument('--diagnostic-renderer-startup', action='store_true', help='Pause renderer using Chromium startup switch, attach GDB then unpause with SIGUSR1')
     args = parser.parse_args()
+    if args.diagnostic_renderer_startup and not args.diagnostic_gdb:
+        raise SystemExit('--diagnostic-renderer-startup requires --diagnostic-gdb')
     if args.diagnostic_gdb and (not args.diagnostic_cdp or not shutil.which('gdb')):
         raise SystemExit('--diagnostic-gdb requires --diagnostic-cdp and installed GDB')
     if os.geteuid() != 0:
@@ -123,6 +134,8 @@ def main():
     if args.diagnostic_cdp:
         command.remove('--dump-dom')
         command += ['--remote-debugging-address=127.0.0.1', '--remote-debugging-port=0', '--enable-logging=stderr']
+    if args.diagnostic_renderer_startup:
+        command.append('--renderer-startup-dialog')
     report = {'status': 'incomplete', 'command': command, 'binary_sha256': digest.hexdigest(),
               'local_directory': str(local), 'results_directory': str(saved),
               'wasm_execution': 'not run', 'dataset_execution': 'not run', 'sandbox_disabled_by_command': False}
@@ -159,7 +172,7 @@ def main():
                             target_snapshots.append({'elapsed': round(elapsed, 2), 'targets': targets})
                         except (OSError, ValueError) as error:
                             target_snapshots.append({'elapsed': round(elapsed, 2), 'error': str(error)})
-                    if args.diagnostic_gdb and not gdb_done and elapsed >= 3:
+                    if args.diagnostic_gdb and not gdb_done and elapsed >= (1 if args.diagnostic_renderer_startup else 3):
                         gdb_done = True
                         candidates, scan_errors = [], []
                         current_descendants = descendants(process.pid)
@@ -182,11 +195,12 @@ def main():
                         gdb_selection = {'selected': targets, 'known_renderer_states': known_states, 'scan_errors': scan_errors,
                                          'renderer_selected': any(role == 'renderer' for _, role in targets)}
                         for pid, role in targets:
+                            if args.diagnostic_renderer_startup and role != 'renderer':
+                                continue
                             logfile = saved / ('gdb-%s-%d.log' % (role, pid))
                             capture = {'pid': pid, 'role': role, 'log': str(logfile)}
                             try:
-                                debugger = subprocess.run([shutil.which('gdb'), '-nx', '-nh', '--batch', '-p', str(pid),
-                                    '-ex', 'set pagination off', '-ex', 'thread apply all bt 12', '-ex', 'detach'],
+                                debugger = subprocess.run(debugger_command(pid, role, args.diagnostic_renderer_startup),
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=15)
                                 logfile.write_text(debugger.stdout)
                                 capture.update(exit_code=debugger.returncode, output_tail=debugger.stdout[-12000:])
@@ -226,7 +240,7 @@ def main():
                            '--no-sandbox' not in item['command'] for item in samples.values())
     report['renderer_seccomp_and_nonroot_observed'] = sandbox_observed
     if args.diagnostic_cdp:
-        report.update(gdb_selection=gdb_selection, gdb_captures=gdb_captures, devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
+        report.update(renderer_startup_pause_requested=args.diagnostic_renderer_startup, gdb_selection=gdb_selection, gdb_captures=gdb_captures, devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
                       page_title_marker_observed=any(target.get('title') == 'MINETHROTTLE_BROWSER_READY'
                           for snapshot in target_snapshots for target in snapshot.get('targets', [])))
     if not timed_out and process.returncode == 0 and report['page_marker_present'] and sandbox_observed:

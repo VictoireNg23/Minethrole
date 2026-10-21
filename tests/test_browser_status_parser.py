@@ -26,3 +26,8 @@ class ProcStatus(unittest.TestCase):
         # state is field 3, start time is field 22.
         text = '123 (renderer (worker)) ' + ' '.join(['S'] + ['0'] * 18 + ['987654'])
         self.assertEqual(m.process_start_ticks(text), '987654')
+
+    def test_unpause_signal_is_only_used_for_startup_renderer(self):
+        self.assertNotIn('signal SIGUSR1', m.debugger_command(1, 'browser', True))
+        self.assertNotIn('signal SIGUSR1', m.debugger_command(1, 'renderer', False))
+        self.assertIn('signal SIGUSR1', m.debugger_command(1, 'renderer', True))
