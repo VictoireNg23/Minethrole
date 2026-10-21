@@ -52,10 +52,11 @@
       "cache_path": null
     },
     "failed_dependency": "src/third_party/devtools-node-modules",
-    "observed_error": "historical gclient attempted _DeleteOrMove; shutil.move raised ENOENT; trigger not yet established",
+    "observed_error": "Original _Clone raised CalledProcessError; update then called _DeleteOrMove in its except handler, which masked the original clone error with ENOENT. Initial Git clone stderr still required.",
     "git_network_evidence": "glslang fetch succeeded and exact checkout retained",
     "hooks": "disabled",
     "build": "not run",
-    "evidence": "user-supplied terminal output"
+    "evidence": "user-supplied terminal output",
+    "expected_devtools_revision": "5f7cd2497d7a643125c3b6eb910d99ba28be6899"
   }
 }
