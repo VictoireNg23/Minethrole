@@ -1,0 +1,7 @@
+# Intégration locale de WebRTC historique
+
+Le serveur officiel a fourni le SHA exact `0ba24191ee90c70679d2452363676c2d65b6b751` dans `/tmp/minethrottle71-webrtc-exact-eugugdcw/repository`. FETCH_HEAD, l'arbre et fsck ont été vérifiés sur Grid5000. Les avis de branche non née et de commit dangling sont attendus avant checkout. La récupération générale des branches avait échoué à fournir cet objet ; aucune substitution de version n'est nécessaire.
+
+`scripts/integrate-webrtc-exact.py WORKSPACE FETCH_REPORT` vérifie le rapport, le dépôt source et la cible propre (y compris les fichiers non suivis). Il importe uniquement depuis le dépôt local puis effectue un checkout détaché sans force dans le workspace isolé. Le fetch superficiel ajoute une frontière shallow locale pour la révision importée ; aucun historique complet ni réseau n'est demandé. Les sources partagées et l'origine Git de la cible restent inchangées. Le script refuse une cible absente, modifiée ou passant par un lien symbolique. Un refus nécessite une inspection, pas un nettoyage automatique.
+
+Cette étape modifie uniquement les objets Git et le checkout WebRTC du workspace préparé. Un rapport est conservé même en cas d'échec. Elle ne relance ni synchronisation, ni hooks, ni compilation. Attendre le résultat avant de reprendre gclient. La réussite ne prouve pas encore que les dépendances imbriquées de WebRTC sont prêtes.
