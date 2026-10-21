@@ -1,6 +1,24 @@
-> **Grid5000 :** pour examiner les sources déjà présentes sans les modifier, suivre [le diagnostic complémentaire Chromium 71](docs/diagnostic-grid5000-chromium71.md).
+# Reproduire MineThrottle avec Chromium 71
 
-> **Travail en cours : Chromium 71 / C++ / V8.** La piste Rust/Wasmtime est abandonnée. Avant toute installation sur votre PC Ubuntu, consulter [le diagnostic initial](docs/diagnostic-ubuntu-chromium71.md) et exécuter `bash scripts/diagnose-ubuntu.sh` depuis le disque prévu pour la compilation. La procédure sera adaptée après lecture de la sortie. Les instructions originales des auteurs sont conservées ci-dessous ; leur compatibilité avec votre machine reste à vérifier.
+**Installation et compilation réussies sur Grid5000 / Ubuntu 22.04 amd64.** Le binaire affiche `Chromium 71.0.3578.98` et ses bibliothèques partagées sont résolues. Le projet reste en C++ / Chromium / V8 ; Rust et Wasmtime ne sont pas utilisés.
+
+➡ **[Guide complet : installation, dépendances, sources historiques, patches, compilation et vérification](docs/README-reproduction-chromium71.md)**
+
+Le guide fournit les commandes dans l'ordre, les chemins à adapter, les résultats attendus, les reprises sans nettoyage et les solutions aux erreurs rencontrées. Il distingue la procédure validée avec réutilisation des objets Git existants d'un téléchargement initial depuis zéro, qui reste à vérifier sur une nouvelle machine. Il faut exécuter les étapes séparément et vérifier leur résultat avant de poursuivre.
+
+Les deux patches originaux sont conservés dans `patches/`. Les adaptations d'arrêt d8 et de compatibilité Bison sont séparées dans `patches/chromium71/`. Les 12 signatures actives ont passé 72 tests synthétiques de compteurs sous d8. Les profils, les vitesses, la défense et les expériences en navigateur sur le dataset restent à valider.
+
+Organisation des ajouts : `scripts/` pour la préparation et les builds, `tests/` pour les contrôles, `config/` pour les paramètres/provenances, `docs/` pour les analyses, le papier et les inventaires. Les sources/binaires Chromium, caches et gros résultats ne sont pas ajoutés à Git.
+
+Vérification locale des scripts, sans téléchargement ni compilation Chromium :
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+```
+
+Les instructions et attributions originales sont conservées ci-dessous pour provenance. Pour refaire le parcours testé sur Ubuntu 22.04, utiliser le guide ci-dessus plutôt que lancer directement le script historique `--all`. Les commandes historiques avec `--no-sandbox` ne constituent pas la procédure de validation du dataset.
+
+---
 
 # MineThrottle
 

@@ -213,17 +213,14 @@
     "build": "not yet retried"
   },
   "chrome_runtime_check": {
-    "status": "blocked_missing_host_libraries",
-    "missing": [
-      "libXss.so.1",
-      "libasound.so.2"
-    ],
-    "packages_ubuntu2204": [
-      "libxss1",
-      "libasound2"
-    ],
-    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-runtime-check-st8lqjho/result.json",
+    "status": "chrome_dependencies_and_version_passed",
+    "missing_libraries": [],
+    "version_exit_code": 0,
+    "version_output": "Chromium 71.0.3578.98",
+    "binary_sha256": "bd6dcd7be07e09553d1d1eb75d2ea7a2719c828b115c93a2735762b460ec0d22",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-runtime-check-jyofi4aa/result.json",
     "evidence": "user-supplied terminal JSON",
-    "version_execution": "not run"
+    "browser_page": "not opened",
+    "wasm_browser_runtime": "not validated"
   }
 }
