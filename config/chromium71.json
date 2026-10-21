@@ -211,5 +211,19 @@
     ],
     "evidence": "user-supplied terminal JSON",
     "build": "not yet retried"
+  },
+  "chrome_runtime_check": {
+    "status": "blocked_missing_host_libraries",
+    "missing": [
+      "libXss.so.1",
+      "libasound.so.2"
+    ],
+    "packages_ubuntu2204": [
+      "libxss1",
+      "libasound2"
+    ],
+    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-runtime-check-st8lqjho/result.json",
+    "evidence": "user-supplied terminal JSON",
+    "version_execution": "not run"
   }
 }
