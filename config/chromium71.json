@@ -116,5 +116,14 @@
     "binary_sha256": "47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e",
     "runtime": "not yet validated",
     "evidence": "user-supplied terminal JSON"
+  },
+  "d8_counter_retest": {
+    "status": "counter_smoke_passed",
+    "cases": 9,
+    "passed": 9,
+    "report": "/tmp/minethrottle71-work-rwkni3hv/counter-smoke-gq1h0mbb/result.json",
+    "binary_sha256": "47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e",
+    "scope": "three repeats each of dormant, negative and active signature 0; no full lifecycle guarantee",
+    "evidence": "user-supplied report excerpt and full-report summary"
   }
 }
