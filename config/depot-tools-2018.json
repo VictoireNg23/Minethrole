@@ -4,8 +4,14 @@
   "selection": "Latest accessible first-parent commit before 2018-12-14T00:00:00Z in the user's existing local depot_tools history",
   "evidence": "User-supplied rev-list output, exit 0; repository is not shallow",
   "compatibility": "not yet validated",
-  "preparation": "incomplete on Grid5000: archive exported to /tmp/minethrottle71-tools-w_exm4gk/depot_tools.tar; conservative entry validation rejected cbuildbot before extraction",
+  "preparation": "pending corrected extraction on Grid5000: reuse existing archive; internal symlinks identified and supported after manifest validation",
   "automatic_updates": false,
   "python_executable": "/usr/bin/python2",
-  "ninja_executable": "/usr/bin/ninja"
+  "ninja_executable": "/usr/bin/ninja",
+  "observed_archive_links": {
+    "cbuildbot": "support/chromite_wrapper",
+    "chrome_set_ver": "support/chromite_wrapper",
+    "cros": "support/chromite_wrapper",
+    "cros_sdk": "support/chromite_wrapper"
+  }
 }
