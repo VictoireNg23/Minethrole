@@ -161,5 +161,11 @@
     "failed_action": "Blink platform:color_data; gperf command not found (127)",
     "evidence": "user-supplied terminal log",
     "resolution": "targeted system package installation pending"
+  },
+  "gperf": {
+    "version": "3.1",
+    "system_binary": "verified by user",
+    "historical_build_environment": "verified by user",
+    "build_action": "not yet retested"
   }
 }
