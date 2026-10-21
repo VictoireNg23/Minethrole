@@ -192,5 +192,15 @@
     "system_binary": "verified by user",
     "historical_build_environment": "verified by user",
     "generated_parser_compatibility": "not yet tested"
+  },
+  "version_headers": {
+    "status": "recorded_header_guards_repaired",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/header-guard-repair-13f7ds9n/result.json",
+    "guards": [
+      "GPU_CONFIG_GPU_LISTS_VERSION_H_",
+      "SKIA_EXT_SKIA_COMMIT_HASH_H_"
+    ],
+    "evidence": "user-supplied terminal JSON",
+    "build": "not yet retried"
   }
 }
