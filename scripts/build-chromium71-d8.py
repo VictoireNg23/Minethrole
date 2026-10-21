@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--jobs', type=int, default=8)
     parser.add_argument('--timeout', type=int, default=900)
     parser.add_argument('--adaptation-report', type=Path, help='Record and verify the separately applied d8 shutdown adaptation')
+    parser.add_argument('--bison-adaptation-report', type=Path, help='Verify and record the separate Blink/Bison wrapper adaptation')
     args = parser.parse_args()
     if not 1 <= args.jobs <= 32 or args.timeout < 1:
         raise SystemExit('Require jobs in 1..32 and a positive timeout')
@@ -48,6 +49,16 @@ def main():
         adaptation = {'report': str(args.adaptation_report.resolve()),
                       'patch_sha256': applied['adaptation_patch_sha256'],
                       'd8_diff_sha256': hashlib.sha256(current_diff.encode()).hexdigest()}
+    bison_adaptation = None
+    if args.bison_adaptation_report:
+        applied = json.loads(args.bison_adaptation_report.read_text())
+        if applied.get('status') != 'bison_include_adaptation_applied_rebuild_required' or applied.get('adaptation_patch_sha256') != '0e9df1fc7f21ef392fef3dd1a27e603d2149d22eb57f501084a65acd34e3639f':
+            raise SystemExit('Expected Bison wrapper adaptation report')
+        saved_diff = (args.bison_adaptation_report.parent / 'rule_bison.diff').read_text().strip()
+        current_diff = subprocess.check_output(['git', '-c', 'core.fsmonitor=false', '-C', str(root / 'src'), 'diff', '--', 'third_party/blink/renderer/build/scripts/rule_bison.py'], text=True, timeout=30).strip()
+        if not saved_diff or saved_diff != current_diff:
+            raise SystemExit('Bison wrapper differs from recorded adaptation')
+        bison_adaptation = {'report': str(args.bison_adaptation_report.resolve()), 'patch_sha256': applied['adaptation_patch_sha256'], 'wrapper_diff_sha256': hashlib.sha256(current_diff.encode()).hexdigest()}
     logs = Path(tempfile.mkdtemp(prefix=args.target + '-build-', dir=root))
     env = dict(os.environ, CCACHE_DIR=str(root / 'ccache-d8'), CCACHE_MAXSIZE='10G', CCACHE_BASEDIR=str(root / 'src'))
     cmd = command(root, output, args.jobs, args.target)
@@ -55,6 +66,7 @@ def main():
               'target': args.target, 'chrome_compilation': 'requested' if args.target == 'chrome' else 'not run', 'runtime_validation': 'not run',
               'ccache_directory': env['CCACHE_DIR']}
     result['shutdown_adaptation'] = adaptation
+    result['bison_adaptation'] = bison_adaptation
     print('Command:', json.dumps(cmd), flush=True)
     print('Log:', logs / 'build.log', flush=True)
     started = time.monotonic()
