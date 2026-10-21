@@ -1,10 +1,12 @@
 import contextlib
 import importlib.util
 import io
+import os
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('sync_nohooks', ROOT / 'scripts/sync-chromium71-nohooks.py')
@@ -27,6 +29,33 @@ class SyncNoHooksTests(unittest.TestCase):
             sync.validate_solution("solutions = []")
         with self.assertRaises(ValueError):
             sync.validate_solution("solutions = __import__('os').getcwd()")
+
+    def test_new_mirror_is_not_enabled_or_inherited(self):
+        with patch.dict(os.environ, {'GIT_CACHE_PATH': '/existing/cache'}):
+            self.assertNotIn('GIT_CACHE_PATH', sync.environment(Path('/example')))
+        self.assertIn('--verbose', sync.sync_arguments())
+
+    def test_probe_requires_explicit_no_cache(self):
+        self.assertEqual(sync.validate_cache_probe('MINETHROTTLE_CACHE_PROBE={"cache_path": null}'), {'cache_path': None})
+        with self.assertRaises(ValueError):
+            sync.validate_cache_probe('MINETHROTTLE_CACHE_PROBE={"cache_path": "/cache"}')
+        with self.assertRaises(ValueError):
+            sync.validate_cache_probe('')
+
+    def test_probe_uses_historical_module_without_network(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            module = root / 'git_cache.py'
+            module.write_text('class Mirror:\n    @staticmethod\n    def GetCachePath():\n        raise RuntimeError("not configured")\n')
+            import subprocess
+            result = subprocess.run([sys.executable, '-B', '-c', sync.CACHE_PROBE, str(root)], capture_output=True, text=True, timeout=5)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(sync.validate_cache_probe(result.stdout)['cache_path'], None)
+
+    def test_mirror_origin_is_not_silently_rewritten(self):
+        with patch.object(sync.subprocess, 'check_output', return_value=b'/old/cache/mirror\n'):
+            with self.assertRaises(ValueError):
+                sync.check_origin(Path('/example/src'), 'https://example.invalid/src.git', {})
 
     def test_logs_preserve_failure_and_timeout(self):
         with tempfile.TemporaryDirectory() as folder:

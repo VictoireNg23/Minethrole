@@ -20,7 +20,9 @@
     "cause": "not yet established; -15 is timeout termination by our wrapper",
     "hooks": "disabled",
     "build": "not run",
-    "evidence": "user-supplied terminal result"
+    "evidence": "user-supplied terminal result",
+    "cache_diagnostic": "new Chromium mirror staging directory and lock observed under git-cache; previous wrapper enabled GIT_CACHE_PATH; exact waiting subprocess not established from uploaded excerpt",
+    "proposed_resume": "remove inherited/configured GIT_CACHE_PATH from process, require historical cache resolver to return none, retain old cache and locks, verbose pinned nohooks sync bounded to 900 seconds"
   },
   "primary_deps_audit": {
     "report": "/tmp/minethrottle71-work-rwkni3hv/deps-audit-w8n1kuy2/report.json",

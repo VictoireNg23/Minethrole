@@ -1,0 +1,54 @@
+=== existing_locks ===
+[]
+
+=== new_pack_files ===
+[]
+
+=== cache_top_level ===
+[
+  {
+    "name": "_cache_tmp0HwNNcchromium.googlesource.com-chromium-src",
+    "is_directory": true
+  },
+  {
+    "name": "chromium.googlesource.com-chromium-src.lock",
+    "is_directory": false
+  }
+]
+
+=== processes_in_workspace_or_tools ===
+[]
+
+=== historical_scm_excerpts ===
+[
+  {
+    "line": 142,
+    "text": "    if getattr(self, 'cache_dir', None):\n      url, _ = gclient_utils.SplitUrlRevision(self.url)\n      return git_cache.Mirror(url)\n    return None\n\n  def GetActualRemoteURL(self, options):\n    \"\"\"Attempt to determine the remote URL for this SCMWrapper.\"\"\"\n    # Git\n    if os.path.exists(os.path.join(self.checkout_path, '.git')):\n      actual_remote_url = self._get_first_remote_url(self.checkout_path)\n\n      mirror = self.GetCacheMirror()\n      # If the cache is used, obtain the actual remote URL from there.\n      if (mirror and mirror.exists() and\n          mirror.mirror_path.replace('\\\\', '/') ==\n          actual_remote_url.replace('\\\\', '/')):\n        actual_remote_url = self._get_first_remote_url(mirror.mirror_path)\n      return actual_remote_url\n    return None\n\n  def DoesRemoteURLMatch(self, options):\n    \"\"\"Determine whether the remote URL of this checkout is the expected URL.\"\"\"\n    if not os.path.exists(self.checkout_path):\n      # A checkout which doesn't exist can't be broken.\n      return True\n\n    actual_remote_url = self.GetActualRemoteURL(options)\n    if actual_remote_url:"
+  },
+  {
+    "line": 215,
+    "text": "  def cache_dir(self):\n    try:\n      return git_cache.Mirror.GetCachePath()\n    except RuntimeError:\n      return None\n\n  def __init__(self, url=None, *args, **kwargs):\n    \"\"\"Removes 'git+' fake prefix from git URL.\"\"\"\n    if url.startswith('git+http://') or url.startswith('git+https://'):\n      url = url[4:]\n    SCMWrapper.__init__(self, url, *args, **kwargs)\n    filter_kwargs = { 'time_throttle': 1, 'out_fh': self.out_fh }\n    if self.out_cb:\n      filter_kwargs['predicate'] = self.out_cb\n    self.filter = gclient_utils.GitFilter(**filter_kwargs)\n\n  @staticmethod\n  def BinaryExists():\n    \"\"\"Returns true if the command exists.\"\"\"\n    try:\n      # We assume git is newer than 1.7.  See: crbug.com/114483\n      result, version = scm.GIT.AssertVersion('1.7')\n      if not result:\n        raise gclient_utils.Error('Git version is older than 1.7: %s' % version)\n      return result\n    except OSError:\n      return False\n"
+  },
+  {
+    "line": 471,
+    "text": "      self._Capture(['reset', '--soft', base_rev])\n\n  def update(self, options, args, file_list):\n    \"\"\"Runs git to update or transparently checkout the working copy.\n\n    All updated files will be appended to file_list.\n\n    Raises:\n      Error: if can't get URL for relative path.\n    \"\"\"\n    if args:\n      raise gclient_utils.Error(\"Unsupported argument(s): %s\" % \",\".join(args))\n\n    self._CheckMinVersion(\"1.6.6\")\n\n    # If a dependency is not pinned, track the default remote branch.\n    default_rev = 'refs/remotes/%s/master' % self.remote\n    url, deps_revision = gclient_utils.SplitUrlRevision(self.url)\n    revision = deps_revision\n    managed = True\n    if options.revision:\n      # Override the revision number.\n      revision = str(options.revision)\n    if revision == 'unmanaged':\n      # Check again for a revision in case an initial ref was specified\n      # in the url, for example bla.git@refs/heads/custombranch\n      revision = deps_revision\n      managed = False"
+  },
+  {
+    "line": 944,
+    "text": "\n  def _GetMirror(self, url, options):\n    \"\"\"Get a git_cache.Mirror object for the argument url.\"\"\"\n    if not self.cache_dir:\n      return None\n    mirror_kwargs = {\n        'print_func': self.filter,\n        'refs': []\n    }\n    if hasattr(options, 'with_branch_heads') and options.with_branch_heads:\n      mirror_kwargs['refs'].append('refs/branch-heads/*')\n    if hasattr(options, 'with_tags') and options.with_tags:\n      mirror_kwargs['refs'].append('refs/tags/*')\n    return git_cache.Mirror(url, **mirror_kwargs)\n\n  def _UpdateMirrorIfNotContains(self, mirror, options, rev_type, revision):\n    \"\"\"Update a git mirror by fetching the latest commits from the remote,\n    unless mirror already contains revision whose type is sha1 hash.\n    \"\"\"\n    if rev_type == 'hash' and mirror.contains_revision(revision):\n      if options.verbose:\n        self.Print('skipping mirror update, it has rev=%s already' % revision,\n                   timestamp=False)\n      return\n\n    if getattr(options, 'shallow', False):\n      # HACK(hinoka): These repositories should be super shallow.\n      if 'flash' in mirror.url:"
+  },
+  {
+    "line": 955,
+    "text": "    if hasattr(options, 'with_tags') and options.with_tags:\n      mirror_kwargs['refs'].append('refs/tags/*')\n    return git_cache.Mirror(url, **mirror_kwargs)\n\n  def _UpdateMirrorIfNotContains(self, mirror, options, rev_type, revision):\n    \"\"\"Update a git mirror by fetching the latest commits from the remote,\n    unless mirror already contains revision whose type is sha1 hash.\n    \"\"\"\n    if rev_type == 'hash' and mirror.contains_revision(revision):\n      if options.verbose:\n        self.Print('skipping mirror update, it has rev=%s already' % revision,\n                   timestamp=False)\n      return\n\n    if getattr(options, 'shallow', False):\n      # HACK(hinoka): These repositories should be super shallow.\n      if 'flash' in mirror.url:\n        depth = 10\n      else:\n        depth = 10000\n    else:\n      depth = None\n    mirror.populate(verbose=options.verbose,\n                    bootstrap=not getattr(options, 'no_bootstrap', False),\n                    depth=depth,\n                    ignore_lock=getattr(options, 'ignore_locks', False),\n                    lock_timeout=getattr(options, 'lock_timeout', 0))\n    mirror.unlock()"
+  },
+  {
+    "line": 1281,
+    "text": "    return self._Capture(checkout_args)\n\n  def _Fetch(self, options, remote=None, prune=False, quiet=False,\n             refspec=None):\n    cfg = gclient_utils.DefaultIndexPackConfig(self.url)\n    # When a mirror is configured, it fetches only the refs/heads, and possibly\n    # the refs/branch-heads and refs/tags, but not the refs/changes. So, if\n    # we're asked to fetch a refs/changes ref from the mirror, it won't have it.\n    # This makes sure that we always fetch refs/changes directly from the\n    # repository and not from the mirror.\n    if refspec and refspec.startswith('refs/changes'):\n      remote, _ = gclient_utils.SplitUrlRevision(self.url)\n      # Make sure that we fetch the (remote) refs/changes/xx ref to the (local)\n      # refs/changes/xx ref.\n      if ':' not in refspec:\n        refspec += ':' + refspec\n    fetch_cmd =  cfg + [\n        'fetch',\n        remote or self.remote,\n    ]\n    if refspec:\n      fetch_cmd.append(refspec)\n\n    if prune:\n      fetch_cmd.append('--prune')\n    if options.verbose:\n      fetch_cmd.append('--verbose')\n    elif quiet:"
+  },
+  {
+    "line": 1567,
+    "text": "    pass\n\n  def update(self, options, args, file_list):\n    \"\"\"Does nothing.\n\n    CIPD packages should be updated at the root by running\n    `CipdRoot.run('update')`.\n    \"\"\"\n    pass"
+  }
+]
+
+END: no source fetch, sync, hook, build, process termination or lock removal performed.

@@ -26,10 +26,10 @@ OPTIONS = ['-c', 'core.hooksPath=/dev/null', '-c', 'core.fsmonitor=false',
 
 def environment(workspace):
     env = os.environ.copy()
-    for name in ('GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES'):
+    for name in ('GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_CACHE_PATH'):
         env.pop(name, None)
     env.update(GIT_OPTIONAL_LOCKS='0', GIT_NO_LAZY_FETCH='1', GIT_TERMINAL_PROMPT='0',
-               GIT_CACHE_PATH=str(workspace / 'git-cache'), DEPOT_TOOLS_UPDATE='0', GCLIENT_PY3='0')
+               DEPOT_TOOLS_UPDATE='0', GCLIENT_PY3='0')
     count = int(env.get('GIT_CONFIG_COUNT', '0'))
     for key, value in [('core.hooksPath', '/dev/null'), ('core.fsmonitor', 'false'), ('gc.auto', '0'), ('maintenance.auto', 'false')]:
         env['GIT_CONFIG_KEY_' + str(count)] = key
@@ -64,8 +64,36 @@ def validate_solution(text):
 
 
 def sync_arguments():
-    return ['sync', '--nohooks', '--noprehooks', '--jobs=4',
+    return ['sync', '--verbose', '--nohooks', '--noprehooks', '--jobs=4',
             '--revision', 'src@' + CHROMIUM, '--revision', 'src/v8@' + V8]
+
+
+CACHE_PROBE = """import sys, json
+sys.path.insert(0, sys.argv[1])
+import git_cache
+try:
+    cache_path = git_cache.Mirror.GetCachePath()
+except RuntimeError:
+    cache_path = None
+print('MINETHROTTLE_CACHE_PROBE=' + json.dumps({'cache_path': cache_path}))
+"""
+
+
+def validate_cache_probe(text):
+    prefix = 'MINETHROTTLE_CACHE_PROBE='
+    records = [json.loads(line[len(prefix):]) for line in text.splitlines() if line.startswith(prefix)]
+    if len(records) != 1 or 'cache_path' not in records[0]:
+        raise ValueError('Historical cache probe output incomplete')
+    if records[0]['cache_path'] not in (None, ''):
+        raise ValueError('Historical depot_tools still selects a Git mirror cache; sync not launched')
+    return records[0]
+
+
+def check_origin(path, expected, env):
+    command = ['git', '--no-optional-locks', *OPTIONS, '-C', str(path), 'config', '--get', 'remote.origin.url']
+    actual = subprocess.check_output(command, env=env, timeout=15).decode().strip()
+    if actual.rstrip('/') != expected.rstrip('/'):
+        raise ValueError('Unexpected origin in ' + str(path) + '; existing configuration left untouched')
 
 
 def terminate(process):
@@ -137,6 +165,8 @@ def main():
     env = environment(workspace)
     check_checkout(workspace / 'src', CHROMIUM, env)
     check_checkout(workspace / 'src/v8', V8, env)
+    check_origin(workspace / 'src', 'https://chromium.googlesource.com/chromium/src.git', env)
+    check_origin(workspace / 'src/v8', 'https://chromium.googlesource.com/v8/v8.git', env)
     seeds = json.loads(args.seed_report.read_text())
     if seeds.get('status') != 'local_pass_completed_not_dependency_readiness':
         raise ValueError('Local seed pass incomplete')
@@ -146,6 +176,8 @@ def main():
             if path.is_absolute() or '..' in path.parts or not path.parts or path.parts[0] != 'src':
                 raise ValueError('Unexpected seed path')
             check_checkout(workspace / str(path), entry['revision'], env)
+            if 'remote' in entry:
+                check_origin(workspace / str(path), entry['remote'], env)
         elif entry['status'] in ('occupied_destination_untouched', 'destination_symlink_deferred', 'destination_outside_workspace'):
             raise ValueError('Unresolved destination conflict in seed report: ' + entry['path'])
     gclient = tools / 'depot_tools/gclient'
@@ -162,7 +194,8 @@ def main():
     logs = Path(tempfile.mkdtemp(prefix='sync-nohooks-', dir=workspace))
     result_file = logs / 'result.json'
     state = {'command': command, 'status': 'checking_cli', 'hooks': 'disabled', 'pre_hooks': 'disabled',
-             'build': 'not run', 'result_file': str(result_file)}
+             'build': 'not run', 'git_mirror_policy': 'disabled; historical resolver must confirm',
+             'result_file': str(result_file)}
     result_file.write_text(json.dumps(state, indent=2) + '\n')
     print('Diagnostic directory:', logs, flush=True)
     help_result = logged_command(prefix + ['sync', '--help'], workspace, env, logs / 'sync-help.log', 60)
@@ -171,6 +204,20 @@ def main():
         state.update(status='cli_check_failed', cli=help_result)
         result_file.write_text(json.dumps(state, indent=2) + '\n')
         print('Sync NOT launched: CLI checks incomplete. Report:', result_file)
+        return 1
+    state['status'] = 'checking_historical_cache_resolver'
+    result_file.write_text(json.dumps(state, indent=2) + '\n')
+    probe = logged_command([str(workspace / 'with-tools.sh'), 'python', '-c', CACHE_PROBE,
+                            str(tools / 'depot_tools')], workspace, env, logs / 'cache-probe.log', 60)
+    state['cache_probe_process'] = probe
+    try:
+        if probe['status'] != 'finished' or probe['underlying_exit_code'] != 0:
+            raise ValueError('Historical cache resolver probe failed')
+        state['cache_probe'] = validate_cache_probe((logs / 'cache-probe.log').read_text(errors='replace'))
+    except ValueError as error:
+        state.update(status='cache_probe_failed_sync_not_launched', reason=str(error))
+        result_file.write_text(json.dumps(state, indent=2) + '\n')
+        print(json.dumps(state, indent=2))
         return 1
     state['status'] = 'sync_running'
     result_file.write_text(json.dumps(state, indent=2) + '\n')
