@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compile patched V8/d8 only, with bounded parallelism and retained logs."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -20,6 +21,7 @@ def main():
     parser.add_argument('gn_report', type=Path)
     parser.add_argument('--jobs', type=int, default=8)
     parser.add_argument('--timeout', type=int, default=900)
+    parser.add_argument('--adaptation-report', type=Path, help='Record and verify the separately applied d8 shutdown adaptation')
     args = parser.parse_args()
     if not 1 <= args.jobs <= 32 or args.timeout < 1:
         raise SystemExit('Require jobs in 1..32 and a positive timeout')
@@ -33,12 +35,25 @@ def main():
     st = os.statvfs(output)
     if st.f_bavail * st.f_frsize < 30 * 1024 ** 3:
         raise SystemExit('Less than 30 GiB free; inspect available space before building')
+    adaptation = None
+    if args.adaptation_report:
+        applied = json.loads(args.adaptation_report.read_text())
+        if applied.get('status') != 'd8_shutdown_adaptation_applied_rebuild_required' or applied.get('adaptation_patch_sha256') != '52b887813a9351dca6e606e6732686f4ca8f7ef775a25b920f2ffea3e53d9da4':
+            raise SystemExit('Expected separately applied shutdown adaptation report')
+        saved_diff = (args.adaptation_report.parent / 'd8.diff').read_text().strip()
+        current_diff = subprocess.check_output(['git', '-c', 'core.fsmonitor=false', '-C', str(root / 'src/v8'), 'diff', '--', 'src/d8.cc'], text=True, timeout=30).strip()
+        if not saved_diff or current_diff != saved_diff:
+            raise SystemExit('d8 source differs from recorded adaptation; inspect before building')
+        adaptation = {'report': str(args.adaptation_report.resolve()),
+                      'patch_sha256': applied['adaptation_patch_sha256'],
+                      'd8_diff_sha256': hashlib.sha256(current_diff.encode()).hexdigest()}
     logs = Path(tempfile.mkdtemp(prefix='d8-build-', dir=root))
     env = dict(os.environ, CCACHE_DIR=str(root / 'ccache-d8'), CCACHE_MAXSIZE='10G', CCACHE_BASEDIR=str(root / 'src'))
     cmd = command(root, output, args.jobs)
     result = {'status': 'incomplete', 'command': cmd, 'log': str(logs / 'build.log'),
               'target': 'd8', 'chrome_compilation': 'not run', 'runtime_validation': 'not run',
               'ccache_directory': env['CCACHE_DIR']}
+    result['shutdown_adaptation'] = adaptation
     print('Command:', json.dumps(cmd), flush=True)
     print('Log:', logs / 'build.log', flush=True)
     started = time.monotonic()
@@ -67,6 +82,12 @@ def main():
         log.seek(0)
         print(log.read()[-24000:], flush=True)
     result['binary_exists'] = (output / 'd8').is_file()
+    if result['status'] == 'd8_build_passed' and result['binary_exists']:
+        digest = hashlib.sha256()
+        with (output / 'd8').open('rb') as binary:
+            for chunk in iter(lambda: binary.read(1024 * 1024), b''):
+                digest.update(chunk)
+        result['binary_sha256'] = digest.hexdigest()
     (logs / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps(result, indent=2))
     print('Report:', logs / 'result.json')
