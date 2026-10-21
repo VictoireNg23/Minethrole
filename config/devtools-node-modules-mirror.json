@@ -8,8 +8,10 @@
   "commit_page": "https://github.com/bpsinc-native/src_third_party_devtools-node-modules/commit/5f7cd2497d7a643125c3b6eb910d99ba28be6899",
   "observed_mirror_head": "a1f65ce099cef6418884ce0fb51b122398d8ce02",
   "verification_in_codex": "read-only ls-remote and GitHub commit metadata page; no dependency source downloaded",
-  "exact_git_fetch_verification": "pending user execution on Grid5000",
+  "exact_git_fetch_verification": "passed on Grid5000: exact expected HEAD after fetch depth1, git fsck --strict and checkout",
   "alternative_config": ".gclient.minethrottle-mirror",
   "original_deps_and_gclient": "unchanged",
-  "sync": "not run with mirror"
+  "sync": "pending guarded resume with explicitly selected alternative config",
+  "user_result_report": "/tmp/minethrottle71-work-rwkni3hv/devtools-exact-mirror-rtzgdkzf/result.json",
+  "alternative_config_status": "created on Grid5000; original .gclient and DEPS untouched"
 }

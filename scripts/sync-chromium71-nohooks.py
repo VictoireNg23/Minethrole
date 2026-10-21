@@ -20,6 +20,8 @@ import time
 CHROMIUM = 'c2bec8045f7ad3ece1c5d80236183a21c1fac3f5'
 V8 = 'b5a5d900a5385d6429edefb11ece72bfa649ca47'
 TOOLS = 'c6a8d114b060f5f68637e8897712a24252402377'
+DEVTOOLS = '5f7cd2497d7a643125c3b6eb910d99ba28be6899'
+DEVTOOLS_MIRROR = 'https://github.com/bpsinc-native/src_third_party_devtools-node-modules.git'
 OPTIONS = ['-c', 'core.hooksPath=/dev/null', '-c', 'core.fsmonitor=false',
            '-c', 'gc.auto=0', '-c', 'maintenance.auto=false', '-c', 'remote.origin.promisor=false']
 
@@ -51,7 +53,7 @@ def check_checkout(path, revision, env):
             raise ValueError('Tracked changes or unavailable diff; preserve and inspect: ' + str(path))
 
 
-def validate_solution(text):
+def validate_solution(text, mirrored=False):
     tree = ast.parse(text)
     if (len(tree.body) != 1 or not isinstance(tree.body[0], ast.Assign)
             or len(tree.body[0].targets) != 1 or not isinstance(tree.body[0].targets[0], ast.Name)
@@ -59,6 +61,8 @@ def validate_solution(text):
         raise ValueError('Unexpected .gclient structure; no overwrite attempted')
     expected = [{'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git',
                  'managed': False, 'custom_deps': {}, 'custom_vars': {}}]
+    if mirrored:
+        expected[0]['custom_deps'] = {'src/third_party/devtools-node-modules': DEVTOOLS_MIRROR + '@' + DEVTOOLS}
     if ast.literal_eval(tree.body[0].value) != expected:
         raise ValueError('Unexpected .gclient solution settings; stopping')
 
@@ -66,6 +70,30 @@ def validate_solution(text):
 def sync_arguments():
     return ['sync', '--verbose', '--nohooks', '--noprehooks', '--jobs=4',
             '--revision', 'src@' + CHROMIUM, '--revision', 'src/v8@' + V8]
+
+
+PRESERVATION_DRIVER = """from __future__ import print_function
+import os, runpy, sys
+tools = sys.argv[1]
+arguments = sys.argv[2:]
+sys.path.insert(0, tools)
+import gclient_scm
+if not hasattr(gclient_scm.SCMWrapper, '_DeleteOrMove'):
+    raise RuntimeError('Historical preservation guard cannot be installed')
+def refuse_delete_or_move(self, force):
+    original = sys.exc_info()[1]
+    message = ('MINETHROTTLE_PRESERVATION_GUARD: automatic delete/move refused for '
+               + str(self.checkout_path))
+    if original is not None:
+        message += '; initial exception: ' + str(original)
+    raise gclient_scm.gclient_utils.Error(message)
+gclient_scm.SCMWrapper._DeleteOrMove = refuse_delete_or_move
+print('MINETHROTTLE_PRESERVATION_GUARD=enabled')
+sys.stdout.flush()
+entry = os.path.join(tools, 'gclient.py')
+sys.argv = [entry] + arguments
+runpy.run_path(entry, run_name='__main__')
+"""
 
 
 CACHE_PROBE = """import sys, json
@@ -150,6 +178,7 @@ def main():
     parser.add_argument('workspace', type=Path)
     parser.add_argument('seed_report', type=Path)
     parser.add_argument('--sync', action='store_true', help='Explicitly enable network synchronization')
+    parser.add_argument('--gclientfile', choices=['.gclient', '.gclient.minethrottle-mirror'], default='.gclient')
     parser.add_argument('--timeout', type=int, default=3600)
     args = parser.parse_args()
     if args.timeout < 1:
@@ -161,12 +190,16 @@ def main():
         raise ValueError('Historical tools revision mismatch')
     if os.environ.get('VPYTHON_BYPASS'):
         raise ValueError('VPYTHON_BYPASS must not be enabled for this test')
-    validate_solution((workspace / '.gclient').read_text())
+    mirrored = args.gclientfile == '.gclient.minethrottle-mirror'
+    validate_solution((workspace / args.gclientfile).read_text(), mirrored=mirrored)
     env = environment(workspace)
     check_checkout(workspace / 'src', CHROMIUM, env)
     check_checkout(workspace / 'src/v8', V8, env)
     check_origin(workspace / 'src', 'https://chromium.googlesource.com/chromium/src.git', env)
     check_origin(workspace / 'src/v8', 'https://chromium.googlesource.com/v8/v8.git', env)
+    if mirrored:
+        check_checkout(workspace / 'src/third_party/devtools-node-modules', DEVTOOLS, env)
+        check_origin(workspace / 'src/third_party/devtools-node-modules', DEVTOOLS_MIRROR, env)
     seeds = json.loads(args.seed_report.read_text())
     if seeds.get('status') != 'local_pass_completed_not_dependency_readiness':
         raise ValueError('Local seed pass incomplete')
@@ -180,10 +213,8 @@ def main():
                 check_origin(workspace / str(path), entry['remote'], env)
         elif entry['status'] in ('occupied_destination_untouched', 'destination_symlink_deferred', 'destination_outside_workspace'):
             raise ValueError('Unresolved destination conflict in seed report: ' + entry['path'])
-    gclient = tools / 'depot_tools/gclient'
-    prefix = [str(workspace / 'with-tools.sh'), str(gclient)]
-    command = prefix + sync_arguments()
-    print('Planned command:', json.dumps(command), flush=True)
+    print('Configuration:', args.gclientfile, flush=True)
+    print('Planned guarded gclient arguments:', json.dumps(sync_arguments()), flush=True)
     if not args.sync:
         print('PLAN ONLY. Add --sync to enable downloads; no gclient or network operation run.')
         return 0
@@ -193,14 +224,22 @@ def main():
         raise ValueError('Less than 100 GiB free before dependency downloads; stopping')
     logs = Path(tempfile.mkdtemp(prefix='sync-nohooks-', dir=workspace))
     result_file = logs / 'result.json'
+    driver = logs / 'guarded-gclient.py'
+    with driver.open('x') as output:
+        output.write(PRESERVATION_DRIVER)
+    prefix = [str(workspace / 'with-tools.sh'), 'python', str(driver),
+              str(tools / 'depot_tools'), '--gclientfile=' + args.gclientfile]
+    command = prefix + sync_arguments()
     state = {'command': command, 'status': 'checking_cli', 'hooks': 'disabled', 'pre_hooks': 'disabled',
              'build': 'not run', 'git_mirror_policy': 'disabled; historical resolver must confirm',
-             'result_file': str(result_file)}
+             'result_file': str(result_file), 'gclientfile': args.gclientfile,
+             'automatic_delete_or_move_recovery': 'blocked in memory by preservation driver',
+             'devtools_exact_mirror_selected': mirrored}
     result_file.write_text(json.dumps(state, indent=2) + '\n')
     print('Diagnostic directory:', logs, flush=True)
     help_result = logged_command(prefix + ['sync', '--help'], workspace, env, logs / 'sync-help.log', 60)
     help_text = (logs / 'sync-help.log').read_text(errors='replace')
-    if help_result['status'] != 'finished' or help_result['underlying_exit_code'] != 0 or not all(flag in help_text for flag in ('--nohooks', '--noprehooks', '--revision')):
+    if help_result['status'] != 'finished' or help_result['underlying_exit_code'] != 0 or not all(flag in help_text for flag in ('--nohooks', '--noprehooks', '--revision', 'MINETHROTTLE_PRESERVATION_GUARD=enabled')):
         state.update(status='cli_check_failed', cli=help_result)
         result_file.write_text(json.dumps(state, indent=2) + '\n')
         print('Sync NOT launched: CLI checks incomplete. Report:', result_file)
@@ -228,6 +267,8 @@ def main():
         result_file.write_text(json.dumps(state, indent=2) + '\n')
         check_checkout(workspace / 'src', CHROMIUM, env)
         check_checkout(workspace / 'src/v8', V8, env)
+        if mirrored:
+            check_checkout(workspace / 'src/third_party/devtools-node-modules', DEVTOOLS, env)
         state['status'] = 'sync_exit_zero_primary_heads_verified_nohooks'
     result_file.write_text(json.dumps(state, indent=2) + '\n')
     print(json.dumps(state, indent=2))

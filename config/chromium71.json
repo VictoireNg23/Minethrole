@@ -58,6 +58,6 @@
     "build": "not run",
     "evidence": "user-supplied terminal output",
     "expected_devtools_revision": "5f7cd2497d7a643125c3b6eb910d99ba28be6899",
-    "proposed_recovery": "fetch exact DEPS commit from verified candidate third-party mirror; preserve original DEPS/.gclient and prepare separate custom_deps config; sync still blocked pending this verification"
+    "proposed_recovery": "exact devtools mirror recovery verified by user; resume using alternative gclient config, cache disabled and in-process _DeleteOrMove preservation guard"
   }
 }
