@@ -482,3 +482,60 @@ cd "$CODE"
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 git diff --check
 ```
+
+## Tests navigateur après compilation : timer, collecte et contrôles synthétiques
+
+État Grid5000 observé le 21 octobre 2026 : le navigateur corrigé SHA256
+`59e77231028f446d0abe03342ab6b2c2e17687a99aa86b58ca82f4118fb9218c`
+a chargé une page bénigne avec sandbox après adaptation clone3 et lancement avec
+`GLIBC_TUNABLES=glibc.pthread.rseq=0`. Les trois tests BPF ciblés ont réussi.
+Voir les étapes détaillées 79 à 88 dans `docs/grid5000-*.md` pour les scripts
+et rapports de ces adaptations, qui s'ajoutent à la compilation décrite plus haut.
+
+Le premier test Wasm sous sandbox a échoué : ouvertures de fichiers refusées,
+puis crash seccomp sur `setitimer` (syscall x86_64 38). La politique refuse aussi
+les horloges CPU dynamiques par thread utilisées par le patch. Ne pas traiter
+la sortie 0 du processus navigateur comme une preuve de succès du renderer.
+
+Le test suivant utilise `--no-sandbox`, conformément au mode historique des
+auteurs, exclusivement pour une fixture arithmétique bénigne sans imports.
+Il ne constitue pas un confinement du dataset. Le test actif manuel a réussi :
+20 000 appels, compteur 0 à 20 000 et autres compteurs affichés à zéro.
+Rapport utilisateur conservé dans `raw/synthetic-no-sandbox.rHV8Lj` du run
+`run-20261021T150736Z-u4tlcbi3`. Aucune classification de minage n'en découle.
+
+Pour répéter de façon enregistrée le test actif et les contrôles négatif et
+dormant (trois répétitions chacun), depuis le contrôleur root :
+
+```bash
+racine='/srv/storage/killerdroid@storage3.rennes.grid5000.fr/datasets/Andromatch_Paper/SOK_WebAsssembly_2025_Grid5000/DualGraphWasm/Dataset_Dynamic'
+depot_grid="$racine/tests/Minethrole-reproduction.GPLllk"
+experience="$racine/resultats_minethrottle/run-20261021T150736Z-u4tlcbi3"
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/synthetic-controls.XXXXXX.log")
+  python3 "$depot_grid/scripts/test-chromium71-synthetic-nosandbox.py" \
+    "$experience" \
+    --browser /tmp/minethrottle71-browser-test-_ysw60o_/browser/chrome \
+    --repeats 3 2>&1 | tee "$journal"
+fi
+```
+
+Le script exige le SHA256 du binaire documenté et le compte nonroot existant
+`minethrottle-test`. Il crée une session locale différente par cas et conserve
+stdout, stderr, fichiers originaux et rapports JSON dans un nouveau répertoire
+persistant `raw/synthetic-nosandbox-*`. Les sessions locales sont conservées.
+Il ne lance aucun fichier du dataset et ne change aucun source Chromium.
+
+Succès attendu : `synthetic_browser_controls_passed`, neuf cas `passed`.
+Actif : 20 000 appels et maxima `[20000,0,0,0,0,0,0,0,0,0,0,0]`.
+Négatif : 20 000 appels sans signature, douze maxima nuls.
+Dormant : module avec signature instancié sans appel, douze maxima nuls.
+Chaque cas exige une sortie 0, un résultat DOM conforme et au moins une ligne
+de compteur ; absence de mesure, crash et timeout restent des échecs.
+Ces contrôles ne couvrent encore que la signature 0 dans Chromium ; les douze
+signatures et la décision originale de détection restent à vérifier ensuite.
+
+Les chemins `/tmp` sont ceux de cette session Grid5000 : après leur disparition,
+reconstruire et refaire le staging. Ne pas substituer silencieusement un autre
+binaire ; une nouvelle provenance doit être vérifiée et documentée.
