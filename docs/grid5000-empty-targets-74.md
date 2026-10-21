@@ -1,0 +1,7 @@
+# DevTools répond mais aucune cible de page : captures de piles
+
+Le rapport `raw/browser-ready-xawfwk20/result.json` montre un endpoint DevTools actif et onze listes de cibles vides pendant 5,61 secondes. Le contrôleur arrête volontairement le diagnostic (pas un timeout). Le renderer non root avec Seccomp=2 et NoNewPrivs=1 reste observé. Aucun marqueur de page ni Wasm exécuté n'est confirmé. Cela ne suffit pas à attribuer le blocage au JavaScript ou au seul message GPU.
+
+Le mode `--diagnostic-gdb`, associé à `--diagnostic-cdp`, identifie uniquement les descendants Chromium du processus lancé et capture les piles du navigateur et d'un renderer à partir d'environ trois secondes d'attente. GDB est attaché en lecture de diagnostic, détaché après capture, sans ignorer les signaux du programme, changer les variables ou désactiver le sandbox. Les piles complètes sont conservées dans de nouveaux fichiers du run ; les fins sont incluses dans le rapport. Les délais du debugger s'ajoutent au délai court d'observation initial et peuvent modifier la temporisation ; ce mode n'est pas un benchmark ou un verdict de validation.
+
+Une interdiction ptrace ou l'absence de symboles sera signalée dans les journaux, pas contournée automatiquement. Ne pas modifier les restrictions système globales sans analyser ce résultat. L'essai est toujours la page locale synthétique sans Wasm. Aucun changement du dataset, des patches ou des permissions existantes n'est effectué.

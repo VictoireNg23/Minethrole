@@ -55,7 +55,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage-report', required=True, type=Path)
     parser.add_argument('--diagnostic-cdp', action='store_true', help='Observe localhost DevTools targets; intentional stop, no passing verdict')
+    parser.add_argument('--diagnostic-gdb', action='store_true', help='Capture live browser/renderer stacks during the CDP diagnostic')
     args = parser.parse_args()
+    if args.diagnostic_gdb and (not args.diagnostic_cdp or not shutil.which('gdb')):
+        raise SystemExit('--diagnostic-gdb requires --diagnostic-cdp and installed GDB')
     if os.geteuid() != 0:
         raise SystemExit('Run the controller as root; Chromium itself is launched as the dedicated user')
     stage = json.loads(args.stage_report.read_text())
@@ -100,6 +103,8 @@ def main():
     target_snapshots = []
     diagnostic_stop = False
     last_probe = 0.0
+    gdb_captures = []
+    gdb_done = False
     with (saved / 'stdout.html').open('w+') as stdout, (saved / 'stderr.log').open('w+') as stderr:
         process = subprocess.Popen(command, cwd=local, env=env, stdout=stdout, stderr=stderr,
                                    start_new_session=True, preexec_fn=limited_core)
@@ -125,6 +130,32 @@ def main():
                             target_snapshots.append({'elapsed': round(elapsed, 2), 'targets': targets})
                         except (OSError, ValueError) as error:
                             target_snapshots.append({'elapsed': round(elapsed, 2), 'error': str(error)})
+                    if args.diagnostic_gdb and not gdb_done and elapsed >= 3:
+                        gdb_done = True
+                        targets = []
+                        for pid in descendants(process.pid):
+                            try:
+                                proc = Path('/proc') / str(pid)
+                                argv = (proc / 'cmdline').read_bytes().replace(b'\0', b' ').decode(errors='replace')
+                                if os.readlink(proc / 'exe') == str(binary) and ('--type=renderer' in argv or '--type=' not in argv):
+                                    targets.append((pid, 'renderer' if '--type=renderer' in argv else 'browser'))
+                            except OSError:
+                                pass
+                        for pid, role in targets[:2]:
+                            logfile = saved / ('gdb-%s-%d.log' % (role, pid))
+                            capture = {'pid': pid, 'role': role, 'log': str(logfile)}
+                            try:
+                                debugger = subprocess.run([shutil.which('gdb'), '-nx', '-nh', '--batch', '-p', str(pid),
+                                    '-ex', 'set pagination off', '-ex', 'thread apply all bt 12', '-ex', 'detach'],
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=15)
+                                logfile.write_text(debugger.stdout)
+                                capture.update(exit_code=debugger.returncode, output_tail=debugger.stdout[-12000:])
+                            except subprocess.TimeoutExpired as error:
+                                output_bytes = error.stdout or b''
+                                text = output_bytes.decode(errors='replace') if isinstance(output_bytes, bytes) else output_bytes
+                                logfile.write_text(text)
+                                capture.update(status='debugger_timeout', output_tail=text[-12000:])
+                            gdb_captures.append(capture)
                     if elapsed >= 6:
                         diagnostic_stop = True
                         break
@@ -155,7 +186,7 @@ def main():
                            '--no-sandbox' not in item['command'] for item in samples.values())
     report['renderer_seccomp_and_nonroot_observed'] = sandbox_observed
     if args.diagnostic_cdp:
-        report.update(devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
+        report.update(gdb_captures=gdb_captures, devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
                       page_title_marker_observed=any(target.get('title') == 'MINETHROTTLE_BROWSER_READY'
                           for snapshot in target_snapshots for target in snapshot.get('targets', [])))
     if not timed_out and process.returncode == 0 and report['page_marker_present'] and sandbox_observed:
