@@ -33,6 +33,22 @@ def descendants(pid):
     return seen
 
 
+def process_start_ticks(stat):
+    # comm may contain spaces/parentheses; field 22 follows the final closing ).
+    return stat.rsplit(')', 1)[1].split()[19]
+
+
+def renderer_state(pid):
+    base = Path('/proc') / str(pid)
+    try:
+        fields = parse_status((base / 'status').read_text())
+        return {'pid': pid, 'present': True, 'state': fields.get('State'), 'parent_pid': fields.get('PPid'),
+                'uid': fields.get('Uid'), 'start_ticks': process_start_ticks((base / 'stat').read_text()),
+                'command': (base / 'cmdline').read_bytes().replace(b'\0', b' ').decode(errors='replace')}
+    except (OSError, IndexError) as error:
+        return {'pid': pid, 'present': False, 'error': str(error)}
+
+
 def observe(pid):
     try:
         base = Path('/proc') / str(pid)
@@ -41,6 +57,7 @@ def observe(pid):
             return None
         fields = parse_status((base / 'status').read_text())
         return {'pid': pid, 'command': command, 'uid': fields.get('Uid'),
+                'start_ticks': process_start_ticks((base / 'stat').read_text()),
                 'seccomp': fields.get('Seccomp'), 'no_new_privs': fields.get('NoNewPrivs'),
                 'user_namespace': os.readlink(base / 'ns/user')}
     except OSError:
@@ -145,7 +162,16 @@ def main():
                     if args.diagnostic_gdb and not gdb_done and elapsed >= 3:
                         gdb_done = True
                         candidates, scan_errors = [], []
-                        for pid in descendants(process.pid):
+                        current_descendants = descendants(process.pid)
+                        known_states = []
+                        for pid, observed in samples.items():
+                            state = renderer_state(pid)
+                            state['still_descendant'] = pid in current_descendants
+                            state['identity_matches'] = state.get('start_ticks') == observed.get('start_ticks') and state.get('uid') == observed.get('uid')
+                            known_states.append(state)
+                            if state['present'] and state['identity_matches'] and '--type=renderer' in state.get('command', ''):
+                                candidates.append((pid, state['command']))
+                        for pid in current_descendants:
                             try:
                                 proc = Path('/proc') / str(pid)
                                 argv = (proc / 'cmdline').read_bytes().replace(b'\0', b' ').decode(errors='replace')
@@ -153,7 +179,7 @@ def main():
                             except OSError as error:
                                 scan_errors.append({'pid': pid, 'error': str(error)})
                         targets = select_debug_targets(candidates, binary)
-                        gdb_selection = {'selected': targets, 'scan_errors': scan_errors,
+                        gdb_selection = {'selected': targets, 'known_renderer_states': known_states, 'scan_errors': scan_errors,
                                          'renderer_selected': any(role == 'renderer' for _, role in targets)}
                         for pid, role in targets:
                             logfile = saved / ('gdb-%s-%d.log' % (role, pid))

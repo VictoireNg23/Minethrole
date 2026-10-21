@@ -21,3 +21,8 @@ class ProcStatus(unittest.TestCase):
                      (22, str(binary) + ' --type=zygote '),
                      (99, str(binary) + '-other --type=renderer ')]
         self.assertEqual(m.select_debug_targets(processes, binary), [(12, 'browser'), (40, 'renderer')])
+
+    def test_process_identity_ignores_spaces_in_comm(self):
+        # state is field 3, start time is field 22.
+        text = '123 (renderer (worker)) ' + ' '.join(['S'] + ['0'] * 18 + ['987654'])
+        self.assertEqual(m.process_start_ticks(text), '987654')
