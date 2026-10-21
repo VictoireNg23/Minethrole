@@ -109,5 +109,12 @@
     "elapsed_seconds": 116.88,
     "report": "/tmp/minethrottle71-work-rwkni3hv/d8-build-n9s9y8tj/result.json",
     "evidence": "user-supplied terminal JSON"
+  },
+  "d8_shutdown_adaptation_build": {
+    "status": "passed",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/d8-build-_sdvyn2t/result.json",
+    "binary_sha256": "47e4eba6ed766e77cc6ef051c649a73b6448c95184ff34a617a0f3ac0a593b0e",
+    "runtime": "not yet validated",
+    "evidence": "user-supplied terminal JSON"
   }
 }
