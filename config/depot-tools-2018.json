@@ -4,7 +4,7 @@
   "selection": "Latest accessible first-parent commit before 2018-12-14T00:00:00Z in the user's existing local depot_tools history",
   "evidence": "User-supplied rev-list output, exit 0; repository is not shallow",
   "compatibility": "not yet validated",
-  "preparation": "pending user execution of isolated snapshot script",
+  "preparation": "incomplete on Grid5000: archive exported to /tmp/minethrottle71-tools-w_exm4gk/depot_tools.tar; conservative entry validation rejected cbuildbot before extraction",
   "automatic_updates": false,
   "python_executable": "/usr/bin/python2",
   "ninja_executable": "/usr/bin/ninja"
