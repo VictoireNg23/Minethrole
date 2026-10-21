@@ -47,6 +47,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('workspace', type=Path)
     parser.add_argument('download_report', type=Path)
+    parser.add_argument('--reuse-stage-report', type=Path, help='Reuse extraction stopped before links were created')
     args = parser.parse_args()
     root = args.workspace.resolve()
     if not (root / 'preparation.json').is_file():
@@ -60,19 +61,42 @@ def main():
         destination = root / relative
         if destination.exists() or destination.is_symlink() or destination.parent.resolve() != destination.parent:
             raise SystemExit('Refused occupied or symlinked destination: ' + str(destination))
-    stage = Path(tempfile.mkdtemp(prefix='minethrottle71-node-stage-'))
+    reuse = args.reuse_stage_report is not None
+    if reuse:
+        previous = json.loads(args.reuse_stage_report.read_text())
+        if previous.get('status') != 'incomplete' or previous.get('links') != [] or previous.get('error') != 'Expected WebUI bundler absent':
+            raise SystemExit('Unexpected previous staging report; inspect manually')
+        stage = Path(previous['directory']).resolve()
+        if stage != args.reuse_stage_report.resolve().parent:
+            raise SystemExit('Staging report directory differs')
+    else:
+        stage = Path(tempfile.mkdtemp(prefix='minethrottle71-node-stage-'))
     report = {'status': 'incomplete', 'directory': str(stage), 'artifacts': {}, 'links': [], 'build': 'not run'}
-    print('NEW directory (retained):', stage, flush=True)
+    logs = Path(tempfile.mkdtemp(prefix='node-stage-validation-', dir=stage))
+    print('Staging directory (retained):', stage, flush=True)
     try:
         for name, (prefix, relative, metadata) in ARTIFACTS.items():
-            report['artifacts'][name] = extract_plain(Path(artifacts[name]['path']), stage, prefix)
+            if not reuse:
+                report['artifacts'][name] = extract_plain(Path(artifacts[name]['path']), stage, prefix)
+            else:
+                report['artifacts'][name] = {'reused_from_report': str(args.reuse_stage_report.resolve())}
         process = subprocess.run([str(stage / 'node-linux-x64/bin/node'), '--version'], cwd=stage,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=15)
         report.update(node_version=process.stdout.strip(), node_exit_code=process.returncode)
         if process.returncode or process.stdout.strip() != 'v8.9.1':
             raise ValueError('Historical Node version check failed')
-        if not (stage / 'node_modules/polymer-bundler/lib/bin/polymer-bundler').is_file():
-            raise ValueError('Expected WebUI bundler absent')
+        package = stage / 'node_modules/polymer-bundler'
+        metadata = json.loads((package / 'package.json').read_text())
+        entry = metadata.get('bin', {}).get('polymer-bundler')
+        if entry != 'lib/bin/polymer-bundler.js' or not (package / entry).is_file():
+            raise ValueError('Expected package entry point absent or changed')
+        # Chromium passes the extensionless name; test Node resolution unchanged.
+        bundler = subprocess.run([str(stage / 'node-linux-x64/bin/node'), str(package / 'lib/bin/polymer-bundler'), '--help'],
+                                 cwd=stage, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=30)
+        (logs / 'bundler-help.log').write_text(bundler.stdout)
+        report.update(bundler_version=metadata.get('version'), bundler_help_exit_code=bundler.returncode, bundler_help_output=bundler.stdout[-4000:])
+        if bundler.returncode:
+            raise ValueError('Original extensionless bundler invocation failed; no links installed')
         for name, (prefix, relative, metadata) in ARTIFACTS.items():
             destination = root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -81,9 +105,9 @@ def main():
         report['status'] = 'historical_node_and_webui_staged_and_linked'
     except Exception as error:
         report['error'] = str(error)
-    (stage / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
+    (logs / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
-    print('Report:', stage / 'result.json')
+    print('Report:', logs / 'result.json')
     return 0 if report['status'] == 'historical_node_and_webui_staged_and_linked' else 1
 
 
