@@ -13,3 +13,11 @@ class VersionHooks(unittest.TestCase):
         self.assertEqual(set(m.selected_hooks('raise Exception()\nhooks = ' + repr(hooks))), {'gpu_lists_version', 'lastchange_skia'})
         with self.assertRaises(ValueError):
             m.selected_hooks('hooks = []')
+
+    def test_staging_keeps_relative_header_and_absolute_sources(self):
+        root, tools = Path('/tmp/isolated'), Path('/tmp/tools')
+        action = ['python', 'src/build/util/lastchange.py', '-m', 'SKIA_COMMIT_HASH', '-s', 'src/third_party/skia', '--header', 'src/skia/ext/skia_commit_hash.h']
+        command = m.generator_command(root, tools, action)
+        self.assertEqual(command[0], '/tmp/tools/with-env.sh')
+        self.assertEqual(command[command.index('--header') + 1], 'src/skia/ext/skia_commit_hash.h')
+        self.assertEqual(command[command.index('-s') + 1], '/tmp/isolated/src/third_party/skia')

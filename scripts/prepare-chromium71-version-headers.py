@@ -24,6 +24,18 @@ def selected_hooks(source):
     return result
 
 
+def generator_command(root, tools, action):
+    arguments = list(action[1:])
+    arguments[0] = str(root / arguments[0])
+    if '-s' in arguments:
+        index = arguments.index('-s') + 1
+        arguments[index] = str(root / arguments[index])
+    else:
+        arguments += ['-s', str(root / 'src')]
+    # Keep --header relative, matching the original hook's stable include guard.
+    return [str(tools / 'with-env.sh'), 'python'] + arguments
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('workspace', type=Path)
@@ -31,6 +43,7 @@ def main():
     root = args.workspace.resolve()
     if not (root / 'preparation.json').is_file():
         raise SystemExit('Expected isolated workspace')
+    tools = Path(json.loads((root / 'preparation.json').read_text())['tools']).resolve()
     hooks = selected_hooks((root / 'src/DEPS').read_text())
     expected = {'gpu_lists_version': 'src/gpu/config/gpu_lists_version.h',
                 'lastchange_skia': 'src/skia/ext/skia_commit_hash.h'}
@@ -47,13 +60,10 @@ def main():
             if destination.exists():
                 report['headers'].append({'name': name, 'status': 'existing_preserved', 'destination': str(destination)})
                 continue
-            output = stage / destination.name
-            arguments = list(action[1:])
-            arguments[arguments.index('--header') + 1] = str(output)
-            if '-s' not in arguments:
-                arguments += ['-s', str(root / 'src')]
-            command = [str(root / 'with-tools.sh'), 'python'] + arguments
-            process = subprocess.run(command, cwd=root, stdout=subprocess.PIPE,
+            output = stage / expected[name]
+            output.parent.mkdir(parents=True, exist_ok=True)
+            command = generator_command(root, tools, action)
+            process = subprocess.run(command, cwd=stage, stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT, text=True, timeout=60)
             (stage / (name + '.log')).write_text(process.stdout)
             if process.returncode or not output.is_file():
