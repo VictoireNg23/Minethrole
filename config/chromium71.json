@@ -154,13 +154,12 @@
     "resolution": "historical Node and WebUI modules now linked; rebuild pending"
   },
   "chrome_latest_build": {
-    "status": "failed_missing_bison",
-    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-4q6sm1_q/result.json",
+    "status": "failed_missing_gpu_version_header",
+    "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-dba9j6al/result.json",
+    "elapsed_seconds": 661.68,
     "exit_code": 1,
-    "elapsed_seconds": 201.76,
-    "failed_action": "Blink make_core_generated_bison; launching bison raises ENOENT",
-    "evidence": "user-uploaded terminal log",
-    "resolution": "targeted bison installation pending"
+    "evidence": "user-supplied terminal log",
+    "resolution": "targeted original version header generators pending"
   },
   "gperf": {
     "version": "3.1",
@@ -177,6 +176,15 @@
       "failed_action": "Blink platform:color_data; gperf command not found (127)",
       "evidence": "user-supplied terminal log",
       "resolution": "targeted system package installation pending"
+    },
+    {
+      "status": "failed_missing_bison",
+      "report": "/tmp/minethrottle71-work-rwkni3hv/chrome-build-4q6sm1_q/result.json",
+      "exit_code": 1,
+      "elapsed_seconds": 201.76,
+      "failed_action": "Blink make_core_generated_bison; launching bison raises ENOENT",
+      "evidence": "user-uploaded terminal log",
+      "resolution": "targeted bison installation pending"
     }
   ],
   "bison": {

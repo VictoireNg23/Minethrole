@@ -1,0 +1,7 @@
+# Chromium : en-tête GPU généré manquant
+
+Le rapport `chrome-build-dba9j6al/result.json` confirme code 1 après 661,68 secondes. La compilation échoue dans `content/browser/gpu/gpu_internals_ui.cc`, inclusion de `gpu/config/gpu_lists_version.h` absent. Les actions ont progressé jusqu'à environ 11 456/13 492 dans cette tentative. Il s'agit d'une sortie du hook historique gpu_lists_version, pas d'un en-tête à remplacer par une valeur inventée.
+
+Le script `prepare-chromium71-version-headers.py` lit les deux actions originales gpu_lists_version et lastchange_skia dans DEPS sans exécuter DEPS. Il conserve leurs arguments (`-m`, `--revision-id-only` selon le hook) et leurs métadonnées Git. Il redirige uniquement la sortie --header vers un nouveau dossier et rend explicite la source Chromium pour le hook qui dépend normalement du cwd. Le lanceur historique conserve le cwd workspace, donc le chemin Skia relatif `src/third_party/skia` reste valide.
+
+Les headers absents sont copiés avec ouverture exclusive aux destinations exactes des hooks. Les fichiers existants sont préservés et signalés, les liens symboliques refusés. Les en-têtes générés et journaux sont conservés dans le staging. Aucun hook de nettoyage, modification des patches, nouvelle configuration ou compilation n'est lancé. Attendre le résultat avant de reprendre le build incrémental. La génération Skia couvre le second hook de même nature encore non exécuté, sans installer de prérequis hypothétiques.
