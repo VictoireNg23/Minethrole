@@ -45,6 +45,17 @@ def describe(row):
             'mining_entry_point': 'not established', 'detection': 'not performed'}
 
 
+def reference_hash_counts(path):
+    # Metadata for large export/import vectors can exceed csv's 128 KiB default.
+    previous_limit = csv.field_size_limit()
+    try:
+        csv.field_size_limit(64 * 1024 * 1024)
+        with path.open(newline='') as source:
+            return Counter(row['sha256'] for row in csv.DictReader(source))
+    finally:
+        csv.field_size_limit(previous_limit)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--inventory', required=True, type=Path)
@@ -72,8 +83,7 @@ def main():
             output.write(json.dumps(item, ensure_ascii=False) + '\n')
     code = Path(__file__).resolve().parents[1]
     reference = code / 'docs/dataset1_s-inventaire.csv'
-    with reference.open(newline='') as source:
-        reference_hashes = Counter(row['sha256'] for row in csv.DictReader(source))
+    reference_hashes = reference_hash_counts(reference)
     result = {'status': 'host_requirements_described_no_execution', 'modules': count,
               'host_requirement_counts_overlapping': dict(tags), 'metadata_statuses': dict(statuses),
               'dataset1_s_comparison': {'reference_rows': sum(reference_hashes.values()),

@@ -1,4 +1,6 @@
 import importlib.util
+import csv
+import tempfile
 from pathlib import Path
 import unittest
 
@@ -24,3 +26,15 @@ class HostRequirements(unittest.TestCase):
         result = m.describe(self.row([]))
         self.assertEqual(result['host_requirements'], ['no_imports_observed'])
         self.assertIn('not established', result['execution_readiness'])
+
+    def test_reference_csv_larger_than_default_field_limit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'reference.csv'
+            with path.open('w', newline='') as output:
+                writer = csv.writer(output)
+                writer.writerow(['sha256', 'exports'])
+                writer.writerow(['abc', 'x' * 200000])
+                writer.writerow(['abc', 'other'])
+            previous = csv.field_size_limit()
+            self.assertEqual(m.reference_hash_counts(path), {'abc': 2})
+            self.assertEqual(csv.field_size_limit(), previous)
