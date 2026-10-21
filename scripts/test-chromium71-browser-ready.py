@@ -80,7 +80,8 @@ def debugger_command(pid, role, resume_startup=False):
     if resume_startup and role == 'renderer':
         # Chromium 71's startup dialog explicitly installs a SIGUSR1 unpause handler.
         command += ['-ex', 'handle SIGUSR1 nostop noprint pass', '-ex', 'signal SIGUSR1']
-    return command + ['-ex', 'thread apply all bt 15', '-ex', 'detach']
+    return command + ['-ex', 'p $_siginfo', '-ex', 'info registers orig_rax rax rip',
+                      '-ex', 'thread apply all bt 15', '-ex', 'detach']
 
 
 def limited_core():
@@ -203,7 +204,9 @@ def main():
                                 debugger = subprocess.run(debugger_command(pid, role, args.diagnostic_renderer_startup),
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=15)
                                 logfile.write_text(debugger.stdout)
-                                capture.update(exit_code=debugger.returncode, output_tail=debugger.stdout[-12000:])
+                                capture.update(exit_code=debugger.returncode, output_tail=debugger.stdout[-12000:],
+                                               signal_details=[line for line in debugger.stdout.splitlines()
+                                                   if any(token in line for token in ('received signal', '_sigsys', '_syscall', 'si_signo', 'si_syscall', 'orig_rax'))])
                             except subprocess.TimeoutExpired as error:
                                 output_bytes = error.stdout or b''
                                 text = output_bytes.decode(errors='replace') if isinstance(output_bytes, bytes) else output_bytes

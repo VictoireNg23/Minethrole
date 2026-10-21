@@ -31,3 +31,9 @@ class ProcStatus(unittest.TestCase):
         self.assertNotIn('signal SIGUSR1', m.debugger_command(1, 'browser', True))
         self.assertNotIn('signal SIGUSR1', m.debugger_command(1, 'renderer', False))
         self.assertIn('signal SIGUSR1', m.debugger_command(1, 'renderer', True))
+
+    def test_syscall_evidence_collected_before_detach(self):
+        args = m.debugger_command(10, 'renderer', True)
+        self.assertIn('p $_siginfo', args)
+        self.assertIn('info registers orig_rax rax rip', args)
+        self.assertLess(args.index('p $_siginfo'), args.index('detach'))
