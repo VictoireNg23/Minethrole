@@ -47,6 +47,17 @@ def observe(pid):
         return None
 
 
+def select_debug_targets(commands, binary):
+    selected = {}
+    for pid, argv in sorted(commands):
+        if not argv.startswith(str(binary) + ' '):
+            continue
+        role = 'renderer' if '--type=renderer ' in argv + ' ' else 'browser' if '--type=' not in argv else None
+        if role and role not in selected:
+            selected[role] = pid
+    return [(selected[role], role) for role in ('browser', 'renderer') if role in selected]
+
+
 def limited_core():
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
@@ -105,6 +116,7 @@ def main():
     last_probe = 0.0
     gdb_captures = []
     gdb_done = False
+    gdb_selection = {}
     with (saved / 'stdout.html').open('w+') as stdout, (saved / 'stderr.log').open('w+') as stderr:
         process = subprocess.Popen(command, cwd=local, env=env, stdout=stdout, stderr=stderr,
                                    start_new_session=True, preexec_fn=limited_core)
@@ -132,16 +144,18 @@ def main():
                             target_snapshots.append({'elapsed': round(elapsed, 2), 'error': str(error)})
                     if args.diagnostic_gdb and not gdb_done and elapsed >= 3:
                         gdb_done = True
-                        targets = []
+                        candidates, scan_errors = [], []
                         for pid in descendants(process.pid):
                             try:
                                 proc = Path('/proc') / str(pid)
                                 argv = (proc / 'cmdline').read_bytes().replace(b'\0', b' ').decode(errors='replace')
-                                if os.readlink(proc / 'exe') == str(binary) and ('--type=renderer' in argv or '--type=' not in argv):
-                                    targets.append((pid, 'renderer' if '--type=renderer' in argv else 'browser'))
-                            except OSError:
-                                pass
-                        for pid, role in targets[:2]:
+                                candidates.append((pid, argv))
+                            except OSError as error:
+                                scan_errors.append({'pid': pid, 'error': str(error)})
+                        targets = select_debug_targets(candidates, binary)
+                        gdb_selection = {'selected': targets, 'scan_errors': scan_errors,
+                                         'renderer_selected': any(role == 'renderer' for _, role in targets)}
+                        for pid, role in targets:
                             logfile = saved / ('gdb-%s-%d.log' % (role, pid))
                             capture = {'pid': pid, 'role': role, 'log': str(logfile)}
                             try:
@@ -186,7 +200,7 @@ def main():
                            '--no-sandbox' not in item['command'] for item in samples.values())
     report['renderer_seccomp_and_nonroot_observed'] = sandbox_observed
     if args.diagnostic_cdp:
-        report.update(gdb_captures=gdb_captures, devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
+        report.update(gdb_selection=gdb_selection, gdb_captures=gdb_captures, devtools_target_snapshots=target_snapshots, intentional_diagnostic_stop=diagnostic_stop,
                       page_title_marker_observed=any(target.get('title') == 'MINETHROTTLE_BROWSER_READY'
                           for snapshot in target_snapshots for target in snapshot.get('targets', [])))
     if not timed_out and process.returncode == 0 and report['page_marker_present'] and sandbox_observed:
