@@ -11,5 +11,15 @@
   "initial_checkouts": "passed on Grid5000: /tmp/minethrottle71-work-rwkni3hv; Chromium/V8 exact HEADs and original patch contexts verified",
   "workspace": "/tmp/minethrottle71-work-rwkni3hv",
   "object_storage": "shared local clones borrowing original chromium/src and chromium/src/v8 object stores; retain originals",
-  "dependency_sync": "not run"
+  "dependency_sync": "not run",
+  "primary_deps_audit": {
+    "report": "/tmp/minethrottle71-work-rwkni3hv/deps-audit-w8n1kuy2/report.json",
+    "git_definitions_inspected": 127,
+    "cipd_definitions_not_tested": 94,
+    "unsupported_paths": 1,
+    "definitions_with_local_commit_candidate": 54,
+    "unresolved_definitions": 0,
+    "platform_conditions": "not evaluated",
+    "evidence": "user-supplied audit summary"
+  }
 }
