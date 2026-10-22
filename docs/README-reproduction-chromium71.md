@@ -618,3 +618,32 @@ Après enregistrement du chemin exact, la prochaine validation scientifique
 concernera les mesures de temps CPU, les profils de référence et la décision
 originale. Les compteurs seuls ne valident ni cette décision, ni la défense,
 ni la compatibilité des hôtes nécessaires aux modules Dataset1_S.
+
+### Rapport complet identifié et inspection des horloges CPU
+
+Le rapport utilisateur complet est
+`raw/synthetic-nosandbox-q2ijdkvx/result.json` : 72 cas,
+`synthetic_browser_all_signatures_passed`.
+
+Avant de tester les profils et la décision originale, inspecter les mesures CPU
+existantes, sans relancer Chromium :
+
+```bash
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/synthetic-cpu-audit.XXXXXX.log")
+  python3 "$depot_grid/scripts/analyze-chromium71-synthetic-cpu.py" \
+    "$experience/raw/synthetic-nosandbox-q2ijdkvx/result.json" \
+    2>&1 | tee "$journal"
+fi
+```
+
+Le script lit les fichiers .count conservés, sépare les lignes d'en-tête des
+lignes de module, regroupe par PID/TID/module et vérifie les timespec, la
+progression des horloges et la monotonie des compteurs. Les résultats vont dans
+un nouveau `raw/synthetic-cpu-audit-*`. Attendu : 72 cas cohérents et statut
+`synthetic_cpu_clocks_consistent`. Une anomalie reste à inspecter ; elle ne
+justifie pas une correction automatique. La durée entre première et dernière
+mesure ne représente pas le temps total des 20 000 appels : certains appels
+peuvent précéder le premier échantillon. Cette inspection ne valide ni la
+précision des horloges, ni les profils historiques, ni la décision de minage.
