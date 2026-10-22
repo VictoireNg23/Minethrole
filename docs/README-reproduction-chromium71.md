@@ -647,3 +647,38 @@ justifie pas une correction automatique. La durée entre première et dernière
 mesure ne représente pas le temps total des 20 000 appels : certains appels
 peuvent précéder le premier échantillon. Cette inspection ne valide ni la
 précision des horloges, ni les profils historiques, ni la décision de minage.
+
+### Horloges cohérentes : paramètres de décision à vérifier
+
+Retour utilisateur : `raw/synthetic-cpu-audit-4mxrylts/result.json`, statut
+`synthetic_cpu_clocks_consistent`, 72 cas cohérents sur 72. Les durées CPU entre
+premier et dernier échantillon vont de 249.272865 à 250.085695 ms. Il s'agit de
+l'étendue observée des échantillons, pas de la durée totale de l'instance.
+
+Le patch original contient `is_defensive = false` : la branche qui calcule les
+vitesses, la similarité cosinus, le score normalisé et les drapeaux de décision
+est conditionnée par ce booléen. Les douze compteurs peuvent donc fonctionner
+sans qu'aucune décision de minage soit exécutée. Les profils historiques
+comportent quatre groupes de trois compteurs, un intervalle CPU de 500 ms,
+un seuil cosinus de 0.99 et un seuil sigma de 3. Aucun de ces paramètres ne doit
+être recalibré silencieusement sur les fixtures.
+
+Vérifier les valeurs effectivement présentes dans le source Grid5000, sans
+activer la défense, modifier le source ou compiler :
+
+```bash
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/decision-readiness.XXXXXX.log")
+  python3 "$depot_grid/scripts/inspect-chromium71-decision-readiness.py" \
+    /tmp/minethrottle71-work-rwkni3hv \
+    "$experience/raw/synthetic-cpu-audit-4mxrylts/result.json" \
+    2>&1 | tee "$journal"
+fi
+```
+
+Attendu : `original_decision_settings_confirmed`, `defensive_enabled: false`,
+aucune différence des constantes et profils. Un nouveau rapport est conservé
+sous `raw/decision-readiness-*`. La prochaine validation devra distinguer le
+calcul de décision et son effet de ralentissement ; cette inspection ne réalise
+ni l'un ni l'autre et n'exécute pas le dataset.
