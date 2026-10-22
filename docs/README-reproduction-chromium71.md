@@ -778,3 +778,26 @@ anciens scripts de build : ils devront d'abord enregistrer cette adaptation et
 utiliser un nouvel output pour préserver le binaire de collecte validé. Le
 staging existant `/tmp/minethrottle71-browser-test-_ysw60o_` reste celui de collecte.
 La validation de la variante suivante utilisera uniquement des fixtures bénignes.
+
+## Après redémarrage ou nouvelle allocation Grid5000
+
+Le stockage partagé sous `/srv/storage/killerdroid@storage3.rennes.grid5000.fr`
+contient le dépôt de reproduction et les rapports persistants. Vérifier que ce
+stockage est monté avant de conclure que les données sont perdues. Les dossiers
+`/tmp/minethrottle71-*` sont locaux au nœud : ils peuvent survivre à certains
+redémarrages et disparaître après nettoyage, réinstallation ou changement de
+nœud. Les paquets système et le compte de test peuvent aussi devoir être recréés.
+
+Commencer par `hostname`, puis vérifier les chemins avant toute reconstruction.
+Le script `scripts/diagnose-grid5000-restart.py` inspecte les chemins connus,
+les trois derniers rapports de validation, les empreintes des binaires encore
+présents et les outils système, sans lancer Chromium ni modifier de fichier.
+Le source est également inspecté pour distinguer collecte et éventuelle variante
+de décision. Ne pas supposer que la dernière commande proposée a été exécutée.
+
+Même si tous les dossiers /tmp ont disparu, les résultats persistants restent
+utilisables. La recompilation devra recréer les outils/stagings locaux nécessaires
+et vérifier les magasins d'objets empruntés des clones partagés. Ne pas créer de
+dossier vide à la place d'un magasin manquant et ne pas lancer de nettoyage Git.
+Les commandes précédentes documentent les chemins d'une session précise ; elles
+ne doivent pas être relancées en bloc avant le diagnostic.
