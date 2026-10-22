@@ -682,3 +682,31 @@ aucune différence des constantes et profils. Un nouveau rapport est conservé
 sous `raw/decision-readiness-*`. La prochaine validation devra distinguer le
 calcul de décision et son effet de ralentissement ; cette inspection ne réalise
 ni l'un ni l'autre et n'exécute pas le dataset.
+
+### Profils originaux confirmés : contrôle arithmétique distinct du runtime
+
+Rapport utilisateur : `raw/decision-readiness-brpgr8zj/result.json`, aucune
+différence (`mismatches: []`), aucune modification du source ni exécution du
+dataset. La branche de décision reste désactivée dans le mode original de collecte.
+
+Vérifier ensuite les calculs des quatre profils : norme euclidienne, cosinus
+avec les vecteurs normalisés originaux, moyenne des trois scores z et condition
+`cos >= 0.99 && z_moyen >= -3`. Le cas norme nulle doit retourner cos=-1.
+Les entrées sont théoriques : moyenne de référence, zéro et forme différente.
+Ce contrôle Python vérifie les formules, sans remplacer le détecteur C++.
+
+```bash
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/decision-math.XXXXXX.log")
+  python3 "$depot_grid/scripts/check-original-decision-math.py" \
+    "$experience/raw/decision-readiness-brpgr8zj/result.json" \
+    2>&1 | tee "$journal"
+fi
+```
+
+Attendu : `original_profile_math_checks_passed`, douze cas arithmétiques.
+Nouveau rapport sous `raw/decision-math-*`. Ce résultat n'est pas une détection
+sur les fixtures ni sur Dataset1_S : il ne teste pas l'exécution C++, la porte
+d'échantillonnage à 500 ms, les signaux ou l'effet de ralentissement. La défense
+reste désactivée ; les seuils et profils ne sont pas modifiés.
