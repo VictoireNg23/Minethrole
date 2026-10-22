@@ -710,3 +710,34 @@ Nouveau rapport sous `raw/decision-math-*`. Ce résultat n'est pas une détectio
 sur les fixtures ni sur Dataset1_S : il ne teste pas l'exécution C++, la porte
 d'échantillonnage à 500 ms, les signaux ou l'effet de ralentissement. La défense
 reste désactivée ; les seuils et profils ne sont pas modifiés.
+
+### Calculs Python réussis ; comparaison avec les expressions C++ originales
+
+Le retour utilisateur confirme les douze cas et le statut
+`original_profile_math_checks_passed`. Pour chaque profil, la moyenne de
+référence donne un cosinus proche de 1 et un score z moyen nul. Le vecteur nul
+et la forme différente ne satisfont pas la condition positive. Le chemin du
+rapport Python n'a pas été communiqué ; aucun nom de dossier n'est supposé.
+
+Comparer maintenant avec les expressions C++ originales dans un petit exécutable
+arithmétique autonome. Le script vérifie les tableaux, la fonction Cos,
+l'accumulation et la moyenne du score z et la condition positive contre le patch
+original avant compilation. Il ne compile pas Chromium, ne modifie aucun source,
+n'active pas la défense et n'exécute aucun module du dataset.
+
+```bash
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/decision-cpp.XXXXXX.log")
+  python3 "$depot_grid/scripts/check-original-decision-cpp.py" \
+    /tmp/minethrottle71-work-rwkni3hv \
+    "$experience/raw/decision-readiness-brpgr8zj/result.json" \
+    2>&1 | tee "$journal"
+fi
+```
+
+Attendu : `original_cpp_score_checks_passed`, douze lignes de résultats. Colonnes :
+profil, entrée (0=moyenne, 1=zéro, 2=forme différente), cosinus, z moyen, condition
+positive, test réussi. Le code C++ généré et les journaux sont conservés dans un
+nouveau `raw/decision-cpp-*`. Ceci contrôle les expressions natives ; la branche
+complète de décision dans Chromium et son ralentissement restent à valider.
