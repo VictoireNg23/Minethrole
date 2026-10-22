@@ -570,3 +570,51 @@ Succès attendu : `synthetic_browser_all_signatures_passed`, 72 cas `passed`.
 Le script conserve chaque essai et le lien au rapport précédent. Il ne modifie
 ni les patchs ni les sources et n'exécute aucun fichier Dataset1_S. La décision
 de minage, les profils CPU et la défense ne sont pas validés par ces contrôles.
+
+### Résultat des douze signatures dans Chromium
+
+Le retour utilisateur du 22 octobre 2026 annonce
+`synthetic_browser_all_signatures_passed`. Les lignes communiquées pour les
+signatures 3 à 11 montrent, à chaque répétition, six lignes de mesure, sortie 0,
+compteur attendu à 20 000 en actif et tous les compteurs nuls en dormant.
+Le statut global du contrôleur exige que tous les cas prévus passent.
+Le chemin du rapport complet reste à relever ; ne pas inventer son nom à partir
+de celui des neuf contrôles précédents.
+
+Pour retrouver les rapports réussis et vérifier explicitement la couverture des
+72 cas, sans lancer Chromium :
+
+```bash
+python3 - "$experience" <<'PY'
+from collections import Counter
+import json
+from pathlib import Path
+import sys
+
+expected = {(kind + str(i), repeat)
+            for i in range(12) for kind in ('dormant', 'active')
+            for repeat in range(3)}
+for path in sorted((Path(sys.argv[1]) / 'raw').glob('synthetic-nosandbox-*/result.json')):
+    report = json.loads(path.read_text())
+    if report.get('status') != 'synthetic_browser_all_signatures_passed':
+        continue
+    cases = report.get('cases', [])
+    coverage = Counter((c.get('mode'), c.get('repeat')) for c in cases)
+    valid = (set(coverage) == expected and all(n == 1 for n in coverage.values())
+             and all(c.get('status') == 'passed' and c.get('exit_code') == 0
+                     and not c.get('timeout') and c.get('sample_rows', 0) > 0
+                     and c.get('counter_maxima') == c.get('expected')
+                     for c in cases))
+    print(json.dumps({'report': str(path), 'status': report['status'],
+                      'cases': len(cases), 'coverage_72_verified': valid,
+                      'results': dict(Counter(c.get('status') for c in cases)),
+                      'binary_sha256': report.get('binary_sha256'),
+                      'sandbox_disabled': report.get('sandbox_disabled'),
+                      'dataset_execution': report.get('dataset_execution')}, indent=2))
+PY
+```
+
+Après enregistrement du chemin exact, la prochaine validation scientifique
+concernera les mesures de temps CPU, les profils de référence et la décision
+originale. Les compteurs seuls ne valident ni cette décision, ni la défense,
+ni la compatibilité des hôtes nécessaires aux modules Dataset1_S.
