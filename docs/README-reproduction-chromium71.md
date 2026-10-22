@@ -741,3 +741,40 @@ profil, entrée (0=moyenne, 1=zéro, 2=forme différente), cosinus, z moyen, con
 positive, test réussi. Le code C++ généré et les journaux sont conservés dans un
 nouveau `raw/decision-cpp-*`. Ceci contrôle les expressions natives ; la branche
 complète de décision dans Chromium et son ralentissement restent à valider.
+
+### Expressions C++ vérifiées ; préparation d'une variante de trace native
+
+Le retour utilisateur confirme `original_cpp_score_checks_passed` pour les
+douze cas, avec les mêmes scores que Python. Ceci valide les expressions
+isolées, pas encore leur exécution dans le renderer. Le chemin du rapport
+C++ n'a pas été communiqué et n'est pas supposé.
+
+Préparer maintenant une variante diagnostique séparément enregistrée : activation
+de `is_defensive` et ajout d'une ligne stderr après le calcul original de chaque
+profil (`MINETHROTTLE_DECISION`, module, profil, intervalle CPU, cosinus, z moyen,
+condition positive). Les profils, seuils, portes de calcul et actions d'origine
+ne sont pas changés. **Le ralentissement original par SIGUSR1 est activé dans
+cette variante après recompilation.** La trace ajoute un coût : ne pas utiliser
+cette variante pour mesurer les performances finales.
+
+```bash
+set -o pipefail
+if git -C "$depot_grid" pull --ff-only origin diagnostics/grid5000-chromium71; then
+  journal=$(mktemp "$experience/logs/decision-trace-prepare.XXXXXX.log")
+  python3 "$depot_grid/scripts/prepare-chromium71-decision-trace.py" \
+    /tmp/minethrottle71-work-rwkni3hv \
+    "$experience/raw/decision-readiness-brpgr8zj/result.json" \
+    --apply 2>&1 | tee "$journal"
+fi
+```
+
+Le script exige le même SHA256 du source que le rapport d'inspection et la
+révision V8 attendue. Il sauvegarde le source, la proposition, le diff distinct
+et les empreintes dans un nouveau dossier local `decision-trace-prepare-*`.
+Les fichiers patchs originaux ne sont pas modifiés. Le code de travail est
+modifié ; aucune compilation ni exécution n'est lancée. Attendu :
+`decision_trace_applied_rebuild_required`. Ne pas relancer directement les
+anciens scripts de build : ils devront d'abord enregistrer cette adaptation et
+utiliser un nouvel output pour préserver le binaire de collecte validé. Le
+staging existant `/tmp/minethrottle71-browser-test-_ysw60o_` reste celui de collecte.
+La validation de la variante suivante utilisera uniquement des fixtures bénignes.
